@@ -6,17 +6,14 @@ export async function POST(req: NextRequest) {
     const { messages } = await req.json();
 
     const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) {
-      return new Response(JSON.stringify({ error: "Missing OPENAI_API_KEY" }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
     const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
     const vectorStoreId = process.env.OPENAI_VECTOR_STORE_ID;
 
-    // Responses API "input" Format
+    if (!apiKey) {
+      return json({ error: "Missing OPENAI_API_KEY" }, 500);
+    }
+
+    // Responses API: messages -> input
     const input = [
       {
         role: "system",
@@ -39,10 +36,12 @@ export async function POST(req: NextRequest) {
       input,
     };
 
-    // File Search via Vector Store aktivieren, wenn vorhanden
+    // File Search an Vector Store anbinden (Responses API)
     if (vectorStoreId) {
       body.tools = [{ type: "file_search" }];
-      body.attachments = [{ vector_store_id: vectorStoreId }];
+      body.tool_resources = {
+        file_search: { vector_store_ids: [vectorStoreId] },
+      };
     }
 
     const resp = await fetch("https://api.openai.com/v1/responses", {
@@ -54,46 +53,61 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify(body),
     });
 
-    if (!resp.ok) {
-      const errText = await resp.text();
-      return new Response(
-        JSON.stringify({ error: `OpenAI error: ${errText}` }),
-        {
-          status: resp.status,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-    }
-
     const data = await resp.json();
 
-    // Responses API stellt oft eine bequeme "output_text" Property bereit.
-    // Fallback: aus dem strukturierten Output zusammensetzen.
-    const text =
-      data.output_text ??
-      (Array.isArray(data.output)
-        ? data.output
-            .map((o: any) =>
-              Array.isArray(o.content)
-                ? o.content
-                    .map((c: any) =>
-                      c.type === "output_text"
-                        ? c.text
-                        : c.text?.value ?? ""
-                    )
-                    .join("")
-                : ""
-            )
-            .join("")
-        : "");
+    if (!resp.ok) {
+      // Fehlertext sauber nach vorne geben
+      const errorMsg =
+        data?.error?.message ||
+        typeof data === "string"
+          ? data
+          : JSON.stringify(data, null, 2);
+      return json({ error: `OpenAI error: ${errorMsg}` }, resp.status);
+    }
 
-    return new Response(JSON.stringify({ text }), {
-      headers: { "Content-Type": "application/json" },
-    });
+    const text = extractTextFromResponses(data);
+
+    return json({ text });
   } catch (e: any) {
-    return new Response(JSON.stringify({ error: e?.message || String(e) }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return json({ error: e?.message || String(e) }, 500);
   }
+}
+
+function json(payload: any, status = 200) {
+  return new Response(JSON.stringify(payload), {
+    status,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+
+/**
+ * Robust gegen verschiedene Responses-Formate:
+ * - data.output_text (bequem)
+ * - data.output[].content[].text (type: "text" | "output_text")
+ */
+function extractTextFromResponses(data: any): string {
+  if (typeof data?.output_text === "string" && data.output_text.trim()) {
+    return data.output_text.trim();
+  }
+
+  const out = data?.output;
+  if (Array.isArray(out)) {
+    for (const item of out) {
+      const content = item?.content;
+      if (Array.isArray(content)) {
+        const parts = content
+          .map((c: any) => {
+            if (typeof c?.text === "string") return c.text; // {type:"text", text:"..."}
+            if (c?.type === "text" && typeof c?.text === "string") return c.text;
+            if (c?.type === "output_text" && typeof c?.text === "string")
+              return c.text;
+            if (typeof c?.text?.value === "string") return c.text.value;
+            return "";
+          })
+          .join("");
+        if (parts.trim()) return parts.trim();
+      }
+    }
+  }
+  return "";
 }
