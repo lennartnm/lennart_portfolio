@@ -22,29 +22,36 @@ export async function POST(req: NextRequest) {
 
     if (!apiKey) return sendJSON({ error: "Missing OPENAI_API_KEY" }, 500);
 
-    // Gespräch als Plain-Text aufbereiten (stabil für Responses API)
-    const system =
-      "You are Lennart's AI clone. Antworte präzise, freundlich und fachkundig zu Digital/Growth Marketing, Demand Gen, SEO/SEM, Paid, Partnerships und Marketing Automation.";
+    // Gespräch als Plain-Text für Responses API
     const history = (messages || [])
       .slice(-15)
       .map((m) => `${m.role === "user" ? "User" : "Assistant"}: ${m.content}`)
       .join("\n\n");
 
-    const input = `${system}\n\n${history}\n\nAssistant:`;
+    // Deine gespeicherte Prompt-Vorlage (ID + Version)
+    const savedPrompt = {
+      id: "pmpt_68ac5c800ba08190a383dc034527f1a60e7bef6f9e734e69",
+      version: "1",
+      // Falls deine Prompt-Vorlage Variablen nutzt, hier ergänzen:
+      // variables: { foo: "bar" }
+    };
 
-    // 1) Versuch MIT File Search (Vector Store anhängen)
+    const input = `${history}\n\nAssistant:`;
+
+    // 1) Versuch: MIT File Search (Vector Store anhängen)
     const withFS: any = {
       model,
       input,
+      prompt: savedPrompt,
       tools: [{ type: "file_search" }],
       attachments: vectorStoreId ? [{ vector_store_id: vectorStoreId }] : undefined,
     };
 
     let data = await callResponses(apiKey, withFS);
 
-    // 400? → wenn es nach File-Search/Attachments/Vector-Store riecht, ohne FS erneut probieren
+    // 400? → wenn es nach File-Search/Vector-Store riecht, OHNE File Search erneut versuchen
     if (data.__error && data.__status === 400 && looksLikeFSProblem(data)) {
-      const noFS = { model, input };
+      const noFS = { model, input, prompt: savedPrompt };
       data = await callResponses(apiKey, noFS);
     }
 
@@ -53,7 +60,7 @@ export async function POST(req: NextRequest) {
         {
           error: `OpenAI error (${data.__status})`,
           message: data.__message,
-          details: data.__raw, // ggf. in Prod entfernen
+          details: data.__raw, // bei Bedarf in Prod entfernen
         },
         data.__status
       );
