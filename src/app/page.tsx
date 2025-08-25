@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Inter, Playfair_Display } from "next/font/google";
 
@@ -32,67 +32,74 @@ export default function Home() {
     {
       role: "assistant",
       content:
-        "Hi, ich bin Lennarts AI-Clone. Was möchtest du wissen? (z. B. SEO, SEM, Paid, Growth, Automation, Demand Gen …)",
+        "Hi, this is my AI clone. Feel free to ask me anything about my previous experience, tools and software I've worked with, or even my personality type.",
     },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
- async function onSubmit(e: React.FormEvent) {
-  e.preventDefault();
-  const prompt = input.trim();
-  if (!prompt) return;
+  // ---> Auto-Scroll: immer ans Ende springen, wenn neue Messages/Loading
+  const chatBodyRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const el = chatBodyRef.current;
+    if (el) {
+      el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
+    }
+  }, [messages, loading]);
 
-  const next = [...messages, { role: "user", content: prompt } as Msg];
-  setMessages(next);
-  setInput("");
-  setLoading(true);
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const prompt = input.trim();
+    if (!prompt) return;
 
-  try {
-    const res = await fetch("/api/chat", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ messages: next.slice(-15) }),
-});
-const json = await res.json();
+    const next = [...messages, { role: "user", content: prompt } as Msg];
+    setMessages(next);
+    setInput("");
+    setLoading(true);
 
-if (!res.ok) {
-  setMessages([
-    ...next,
-    {
-      role: "assistant",
-      content:
-        (json?.message ? `Fehler: ${json.message}` : json?.error) ||
-        "Server-Fehler. Vercel Function Logs prüfen.",
-    },
-  ]);
-  setLoading(false);
-  return;
-}
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: next.slice(-15) }),
+      });
+      const json = await res.json();
 
+      if (!res.ok) {
+        setMessages([
+          ...next,
+          {
+            role: "assistant",
+            content:
+              (json?.message ? `Fehler: ${json.message}` : json?.error) ||
+              "Server-Fehler. Vercel Function Logs prüfen.",
+          },
+        ]);
+        setLoading(false);
+        return;
+      }
 
-    const reply: string = (json?.text || "").trim();
-    setMessages([
-      ...next,
-      {
-        role: "assistant",
-        content: reply || "Ich konnte diesen Moment keinen Text extrahieren.",
-      } as Msg,
-    ]);
-  } catch (err: any) {
-    setMessages([
-      ...next,
-      {
-        role: "assistant",
-        content:
-          "Netzwerk-/Serverfehler. Bitte Logs prüfen und OPENAI_API_KEY verifizieren.",
-      },
-    ]);
-  } finally {
-    setLoading(false);
+      const reply: string = (json?.text || "").trim();
+      setMessages([
+        ...next,
+        {
+          role: "assistant",
+          content: reply || "Ich konnte diesen Moment keinen Text extrahieren.",
+        } as Msg,
+      ]);
+    } catch (err: any) {
+      setMessages([
+        ...next,
+        {
+          role: "assistant",
+          content:
+            "Netzwerk-/Serverfehler. Bitte Logs prüfen und OPENAI_API_KEY verifizieren.",
+        },
+      ]);
+    } finally {
+      setLoading(false);
+    }
   }
-}
-
 
   return (
     <main className={`${inter.variable} ${playfair.variable}`}>
@@ -148,7 +155,7 @@ if (!res.ok) {
               </div>
             </div>
 
-            <div className="chatBody">
+            <div className="chatBody" ref={chatBodyRef}>
               {messages.map((m, i) => (
                 <div key={i} className={`bubble ${m.role}`}>
                   {m.content}
@@ -521,6 +528,7 @@ if (!res.ok) {
           gap: 0.5rem;
           align-content: start;
           overflow-y: auto;
+          scroll-behavior: smooth; /* zusätzlich zum JS-Scroll */
         }
         .bubble {
           max-width: 80%;
@@ -530,6 +538,7 @@ if (!res.ok) {
           word-wrap: break-word;
           white-space: pre-wrap;
           font-size: 0.95rem;
+          text-align: left; /* linksbündig */
         }
         .bubble.user {
           justify-self: end;
@@ -537,7 +546,7 @@ if (!res.ok) {
           border: 1px solid rgba(255, 255, 255, 0.14);
         }
         .bubble.assistant {
-          justify-self: start;
+          justify-self: start; /* Antworten links */
           background: rgba(255, 255, 255, 0.03);
           border: 1px solid rgba(255, 255, 255, 0.1);
         }
