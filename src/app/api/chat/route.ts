@@ -1,19 +1,30 @@
 // app/api/chat/route.ts
 import { NextRequest } from "next/server";
 
+export const runtime = "nodejs"; // sicherstellen, dass wir Node-Runtime nutzen
+
+type Msg = { role: "user" | "assistant"; content: string };
+
+function json(payload: any, status = 200) {
+  return new Response(JSON.stringify(payload), {
+    status,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+
 export async function POST(req: NextRequest) {
   try {
-    const { messages } = await req.json();
+    const { messages } = (await req.json()) as { messages: Msg[] };
 
     const apiKey = process.env.OPENAI_API_KEY;
     const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
     const vectorStoreId = process.env.OPENAI_VECTOR_STORE_ID;
 
     if (!apiKey) {
-      return json({ error: "Missing OPENAI_API_KEY" }, 500);
+      return json({ error: "Missing OPENAI_API_KEY (server env)" }, 500);
     }
 
-    // Responses API: messages -> input
+    // Responses API "input" (system + conversation)
     const input = [
       {
         role: "system",
@@ -25,18 +36,15 @@ export async function POST(req: NextRequest) {
           },
         ],
       },
-      ...messages.map((m: { role: "user" | "assistant"; content: string }) => ({
+      ...messages.map((m) => ({
         role: m.role,
         content: [{ type: "text", text: m.content }],
       })),
     ];
 
-    const body: any = {
-      model,
-      input,
-    };
+    const body: any = { model, input };
 
-    // File Search an Vector Store anbinden (Responses API)
+    // File Search via Vector Store (Responses API)
     if (vectorStoreId) {
       body.tools = [{ type: "file_search" }];
       body.tool_resources = {
@@ -53,18 +61,34 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify(body),
     });
 
-    const data = await resp.json();
-
+    // --- Fehler robust nach vorne geben ---
     if (!resp.ok) {
-      // Fehlertext sauber nach vorne geben
-      const errorMsg =
-        data?.error?.message ||
-        typeof data === "string"
-          ? data
-          : JSON.stringify(data, null, 2);
-      return json({ error: `OpenAI error: ${errorMsg}` }, resp.status);
+      let err: any;
+      try {
+        err = await resp.json();
+      } catch {
+        err = await resp.text();
+      }
+
+      const message =
+        typeof err === "string"
+          ? err
+          : err?.error?.message ??
+            err?.message ??
+            JSON.stringify(err, null, 2);
+
+      return json(
+        {
+          error: `OpenAI error (${resp.status})`,
+          message,
+          // optional: rohes Objekt zur Diagnose (in Prod evtl. entfernen)
+          details: typeof err === "string" ? err : err,
+        },
+        resp.status
+      );
     }
 
+    const data = await resp.json();
     const text = extractTextFromResponses(data);
 
     return json({ text });
@@ -73,41 +97,29 @@ export async function POST(req: NextRequest) {
   }
 }
 
-function json(payload: any, status = 200) {
-  return new Response(JSON.stringify(payload), {
-    status,
-    headers: { "Content-Type": "application/json" },
-  });
-}
-
-/**
- * Robust gegen verschiedene Responses-Formate:
- * - data.output_text (bequem)
- * - data.output[].content[].text (type: "text" | "output_text")
- */
+/** zieht Text aus verschiedenen möglichen Responses-Formaten */
 function extractTextFromResponses(data: any): string {
   if (typeof data?.output_text === "string" && data.output_text.trim()) {
     return data.output_text.trim();
   }
 
+  // Fallback durch data.output[*].content[*]
   const out = data?.output;
   if (Array.isArray(out)) {
+    const buf: string[] = [];
     for (const item of out) {
       const content = item?.content;
-      if (Array.isArray(content)) {
-        const parts = content
-          .map((c: any) => {
-            if (typeof c?.text === "string") return c.text; // {type:"text", text:"..."}
-            if (c?.type === "text" && typeof c?.text === "string") return c.text;
-            if (c?.type === "output_text" && typeof c?.text === "string")
-              return c.text;
-            if (typeof c?.text?.value === "string") return c.text.value;
-            return "";
-          })
-          .join("");
-        if (parts.trim()) return parts.trim();
+      if (!Array.isArray(content)) continue;
+      for (const c of content) {
+        if (typeof c?.text === "string") buf.push(c.text);
+        else if (c?.type === "text" && typeof c?.text === "string") buf.push(c.text);
+        else if (c?.type === "output_text" && typeof c?.text === "string") buf.push(c.text);
+        else if (typeof c?.text?.value === "string") buf.push(c.text.value);
       }
     }
+    const joined = buf.join("").trim();
+    if (joined) return joined;
   }
+
   return "";
 }
