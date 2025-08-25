@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Inter, Playfair_Display } from "next/font/google";
+import Image from "next/image";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const playfair = Playfair_Display({ subsets: ["latin"], style: ["italic"], variable: "--font-playfair" });
@@ -42,14 +43,21 @@ export default function Home() {
           <p className="tagline">Entrepreneurial driven Digital Marketing Specialist</p>
 
           {/* Chatbox */}
-          <div className="chatPlaceholder" role="region" aria-label="AI Chatbot placeholder">
-            <div className="chatProfile">
-              <img src="src/Profil6.png" alt="Lennart Avatar" className="chatAvatar" />
-              <div>
-                <p className="chatName">Lennart Niehausmeier</p>
-                <p className="chatTitle">Talk to my AI Clone to find out more about me.</p>
-              </div>
-            </div>
+        <div className="chatProfile">
+  <Image
+    src="/Profil6.png"           // Bild nach /public legen
+    alt="Lennart Avatar"
+    width={56}
+    height={56}
+    className="chatAvatar"
+    priority
+  />
+  <div className="chatMeta">
+    <p className="chatName">Lennart Niehausmeier</p>
+    <p className="chatTitle">Talk to my AI Clone to find out more about me.</p>
+  </div>
+</div>
+
 
             <div className="chatBody">
               <div className="message skeleton" />
@@ -169,10 +177,40 @@ export default function Home() {
 
         /* Chatbox mit solidem Hintergrund */
         .chatPlaceholder { position:relative; z-index:2; margin:2rem auto 1rem; max-width:900px; background:#0b0b0b; border:1px solid #1f1f1f; border-radius:16px; overflow:hidden; display:flex; flex-direction:column; height:460px; box-shadow:0 0 0 1px rgba(255,255,255,.03) inset; }
-        .chatProfile { display:flex; align-items:center; gap:1rem; padding:1rem; border-bottom:1px solid rgba(255,255,255,.08); }
-        .chatAvatar { width:56px; height:56px; border-radius:50%; object-fit:cover; border:2px solid rgba(255,255,255,.2); }
-        .chatName { margin:0; font-weight:600; font-size:1rem; font-align:left;}
-        .chatTitle { margin:0; font-size:.875rem; color:var(--text-mid); font-align:left; }
+      .chatProfile {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.chatAvatar {
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255,255,255,0.2);
+}
+
+.chatMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;   /* linksbündig neben dem Bild */
+  text-align: left;          /* Text links ausrichten */
+  gap: 0.15rem;
+}
+
+.chatName {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.chatTitle {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-mid);
+}
+
 
         .chatBody { flex:1; padding:1rem; display:grid; gap:.75rem; align-content:start; }
         .message { height:18px; border-radius:8px; background:linear-gradient(90deg, rgba(255,255,255,.08), rgba(255,255,255,.16), rgba(255,255,255,.08)); background-size:200% 100%; animation: shimmer 2s linear infinite; }
