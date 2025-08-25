@@ -175,7 +175,7 @@ export default function Home() {
         }
 
         /* ===== Hero ===== */
-   .hero {
+  .hero {
   position: relative;
   background-color: #000;
   color: #fff;
@@ -191,7 +191,7 @@ export default function Home() {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
   background-repeat: repeat;
-  z-index: 0;
+  z-index: 0;              /* Sterne bleiben hinten */
   pointer-events: none;
 }
 
@@ -206,7 +206,7 @@ export default function Home() {
   animation: shimmer 8s infinite ease-in-out;
 }
 
-/* kleinere Sterne */
+/* kleine Sterne */
 .hero::after {
   background-image: radial-gradient(1px 1px at 15% 30%, rgba(255,255,255,0.7) 99%, transparent 100%),
                     radial-gradient(1px 1px at 85% 25%, rgba(255,255,255,0.6) 99%, transparent 100%),
@@ -222,14 +222,20 @@ export default function Home() {
   50% { opacity: 0.65; }
 }
 
-/* Inhalt nach vorne holen */
+/* Inhalt (inkl. Chatbox) vor die Sterne bringen */
 .heroInner {
   position: relative;
-  z-index: 1;
+  z-index: 1;     /* über den Sternen */
   max-width: 1120px;
   margin: 0 auto;
   text-align: center;
 }
+
+.chatPlaceholder {
+  position: relative;
+  z-index: 2;     /* explizit noch höher */
+}
+
 
 
         /* Marquee closer + side fades */
