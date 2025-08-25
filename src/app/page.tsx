@@ -175,13 +175,32 @@ export default function Home() {
         }
 
         /* ===== Hero ===== */
-        .hero {
-          position: relative;
-          background-color: #000;
-          color: #fff;
-          padding: 4rem 1.25rem 8rem;
-          overflow: hidden;
-          min-height: 100vh;
+      .hero {
+  position: relative;
+  background-color: #000;
+  color: #fff;
+  padding: 4rem 1.25rem 8rem;
+  overflow: hidden;
+  min-height: 100vh;
+
+  /* Sterne Layer */
+  background-image: radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,0.9), transparent),
+                    radial-gradient(1.5px 1.5px at 80% 20%, rgba(255,255,255,0.8), transparent),
+                    radial-gradient(1.2px 1.2px at 60% 70%, rgba(255,255,255,0.7), transparent),
+                    radial-gradient(2px 2px at 10% 80%, rgba(255,255,255,0.9), transparent),
+                    radial-gradient(1.8px 1.8px at 90% 60%, rgba(255,255,255,0.6), transparent),
+                    radial-gradient(1px 1px at 40% 50%, rgba(255,255,255,0.5), transparent);
+  background-repeat: repeat;
+  background-size: cover;
+  animation: twinkle 10s infinite alternate;
+}
+
+@keyframes twinkle {
+  0%   { opacity: 0.9; }
+  50%  { opacity: 0.6; }
+  100% { opacity: 0.9; }
+}
+
         }
         .heroInner {
           max-width: 1120px;
