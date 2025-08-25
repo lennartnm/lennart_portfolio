@@ -3,8 +3,8 @@ import type { Metadata } from "next";
 import CookieBanner from "@/components/ui/CookieBanner";
 
 export const metadata: Metadata = {
-  title: "findbar – KI-optimierte Blog-Artikel",
-  description: "Skaliere Dein Unternehmen mit KI-optimierten Blog-Artikeln.",
+  title: "Lennart Niehausmeier",
+  description: "Find out more about me or chat to my AI clone.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
