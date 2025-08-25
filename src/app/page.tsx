@@ -61,22 +61,23 @@ export default function Home() {
             role="region"
             aria-label="AI Chatbot placeholder"
           >
-            <div className="chatProfile">
-             <Image
-  src="/Profil6.png"
-  alt="Lennart Avatar"
-  width={56}
-  height={56}
-  className="chatAvatar"
-/>
+           <div className="chatProfile">
+  <div className="avatarWrap">
+    <Image
+      src="/Profil6.png"      // Datei liegt in /public/Profil6.png
+      alt="Lennart Avatar"
+      fill                     // füllt den Wrapper
+      sizes="56px"
+      className="chatAvatar"
+      priority
+    />
+  </div>
+  <div className="chatMeta">
+    <p className="chatName">Lennart Niehausmeier</p>
+    <p className="chatTitle">Talk to my AI Clone to find out more about me.</p>
+  </div>
+</div>
 
-              <div className="chatMeta">
-                <p className="chatName">Lennart Niehausmeier</p>
-                <p className="chatTitle">
-                  Talk to my AI Clone to find out more about me.
-                </p>
-              </div>
-            </div>
 
             <div className="chatBody">
               <div className="message skeleton" />
@@ -400,12 +401,17 @@ export default function Home() {
           padding: 1rem;
           border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
-        .chatAvatar {
-  width: 56px;             /* gleiche Größe wie im <Image> */
+        .avatarWrap {
+  position: relative;
+  width: 56px;
   height: 56px;
-  border-radius: 50%;       /* rund machen */
-  object-fit: cover;        /* Bild sauber zuschneiden */
-  border: 2px solid rgba(255,255,255,0.2);
+  border-radius: 50%;     /* macht die Form rund */
+  overflow: hidden;       /* schneidet das Bild sauber rund zu */
+  flex-shrink: 0;         /* verhindert Zusammenquetschen in Flex-Row */
+}
+
+.chatAvatar {
+  object-fit: cover;      /* füllt den Kreis ohne Verzerren */
 }
 
 
