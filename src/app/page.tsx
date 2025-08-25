@@ -207,11 +207,9 @@ export default function Home() {
         <div className="skillsInner">
           {/* Intro links */}
           <aside className="skillsIntro">
-            <h2 className="skillsTitle">Skillset</h2>
+            <h2 className="skillsTitle">What I enjoy doing</h2>
             <p className="skillsLead">
-              With skills in over 4 different fields of growth & marketing,
-              I’m a strong partner when it comes to shipping full-funnel projects.
-              Whatever your needs are, I can jump in and take on the challenge.
+              A selection of activities I'm passionate about.
             </p>
           </aside>
 
@@ -221,7 +219,7 @@ export default function Home() {
               <div className="skillIcon" aria-hidden>📈</div>
               <h3 className="skillName">Growth / Demand Gen</h3>
               <p className="skillText">
-                Full-funnel Programme, ABM-Piloten, stetige Pipeline-Hebel.
+                Validating offers and establishing funnels, that scale.
               </p>
             </article>
 
@@ -229,60 +227,30 @@ export default function Home() {
               <div className="skillIcon" aria-hidden>💳</div>
               <h3 className="skillName">Performance Marketing</h3>
               <p className="skillText">
-                Paid Search & Paid Social skalieren, ROAS steigern, Tests priorisieren.
+   Driving revenue through Paid Social and Paid Search Ads,
               </p>
             </article>
 
             <article className="skillCard">
               <div className="skillIcon" aria-hidden>🤖</div>
-              <h3 className="skillName">Automation & Tracking</h3>
+              <h3 className="skillName">Automation, AI & Tracking</h3>
               <p className="skillText">
-                Journeys, Lead-Scoring, Attribution & sauberes Measurement.
+                Analysing data to make smarter decisions, using AI to enhance processes.
               </p>
             </article>
 
             <article className="skillCard">
-              <div className="skillIcon" aria-hidden>🔎</div>
-              <h3 className="skillName">SEO / Content</h3>
+              <div className="skillIcon" aria-hidden>🧠</div>
+              <h3 className="skillName">Digital Strategy</h3>
               <p className="skillText">
-                Technische Basis, Intent-Content, AI-gestützte Workflows.
+                Thinking strategically how to use combine channels and new ideas.
               </p>
             </article>
           </div>
         </div>
       </section>
 
-      {/* ===== Section 2b: Roadmap ===== */}
-      <section className="roadmap">
-        <div className="roadmapInner">
-          <h2 className="roadmapTitle">Roadmap</h2>
-          <div className="roadmapUnderline" />
-          <div className="roadmapSteps">
-            <div className="roadmapRail" aria-hidden />
-            <div className="step">
-              <div className="dot" />
-              <h3>01 • Discovery</h3>
-              <p>
-                Quick audit & Ziele klären: ICP, Funnel-Health, bestehende Kanäle.
-              </p>
-            </div>
-            <div className="step">
-              <div className="dot" />
-              <h3>02 • Build & Launch</h3>
-              <p>
-                Tracking & Automation, Always-on Paid/SEO, Experimente priorisieren.
-              </p>
-            </div>
-            <div className="step">
-              <div className="dot" />
-              <h3>03 • Scale</h3>
-              <p>
-                Winning Plays ausrollen, Partner/Content-Motions, Effizienz heben.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+    
 
       {/* ===== Section 3: CTA ===== */}
       <section
@@ -290,17 +258,17 @@ export default function Home() {
         style={{ backgroundColor: "#000000", color: "#ffffff" }}
       >
         <p className="ctaBig">
-          <strong>Sounds like a match?</strong>
+          <strong>Worth to talk?</strong>
         </p>
-        <p className="ctaSmall">Let&apos;s have a first talk</p>
+        <p className="ctaSmall">Feel free to contact me for a first chat via <u>lennart.niehausmeier@web.de</u></p>
       </section>
 
       {/* ===== Section 4: Footer ===== */}
       <footer className="footer">
         <nav className="footerNav">
-          <a href="#imprint">Imprint</a>
-          <a href="#agb">AGB</a>
-          <a href="#datenschutz">Datenschutz</a>
+          <a href="#imprint">Legal Notice</a>
+       
+          <a href="#datenschutz">Data Privacy</a>
         </nav>
         <p className="footNote">© {new Date().getFullYear()} Lennart</p>
       </footer>
