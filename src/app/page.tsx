@@ -1,10 +1,5 @@
 "use client";
 
-// app/page.tsx - Next.js (app router) TypeScript page for Vercel
-// Assumes Next.js 13+ with the /app directory enabled.
-// Fonts: Inter for base, Playfair Display (italic) for the name.
-// No external CSS framework required; styles are included via <style jsx>.
-
 import React from "react";
 import { Inter, Playfair_Display } from "next/font/google";
 
@@ -30,9 +25,8 @@ export default function Home() {
     <main className={`${inter.variable} ${playfair.variable}`}>
       {/* ===== Hero / Section 1 ===== */}
       <section className="hero">
-        {/* Headline + Keywords */}
         <div className="heroInner">
-          {/* Flowing keyword chips (endless flow) */}
+          {/* Flowing keyword chips */}
           <div className="marqueeBar" aria-hidden>
             <div className="marquee">
               {KEYWORDS.concat(KEYWORDS).map((kw, i) => (
@@ -40,6 +34,8 @@ export default function Home() {
               ))}
             </div>
           </div>
+
+          {/* Headline */}
           <h1 className="name">Hi, I&apos;m <span className="italicName">Lennart</span></h1>
           <p className="tagline">Entrepreneurial driven Digital Marketing Specialist</p>
 
@@ -60,8 +56,7 @@ export default function Home() {
           {/* Text placeholder below chat */}
           <div className="belowChat">
             <p>
-              Platzhalter für Text. Hier kannst du Kontext, Angebot oder einen kurzen Elevator Pitch
-              ergänzen. Dieser Bereich skaliert mit dem Inhalt.
+              Platzhalter für Text. Hier kannst du Kontext, Angebot oder einen kurzen Elevator Pitch ergänzen.
             </p>
           </div>
         </div>
@@ -116,45 +111,40 @@ export default function Home() {
         <p className="footNote">© {new Date().getFullYear()} Lennart</p>
       </footer>
 
+      <style jsx global>{`
+        body { margin: 0; background: #fff; color: #000; }
+      `}</style>
+
       <style jsx>{`
         :root {
-          --bg-black: #0b0b0b;
+          --bg-black: #000000;
           --bg-white: #ffffff;
           --text-high: #f5f5f5;
           --text-mid: #cfcfcf;
           --text-dark: #111111;
-          --chip-bg: rgba(255,255,255,0.08);
-          --chip-br: rgba(255,255,255,0.22);
-          --border: rgba(17,17,17,0.12);
         }
-        main { font-family: var(--font-inter), ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
+        main { font-family: var(--font-inter), ui-sans-serif; }
 
         /* ===== Section 1 (Hero) ===== */
         .hero {
           position: relative;
-          background: var(--bg-black);
+          background-color: var(--bg-black);
           color: var(--text-high);
-          padding: 4rem 1.25rem 8rem; /* extra bottom for fade */
+          padding: 4rem 1.25rem 8rem;
           overflow: hidden;
         }
         .heroInner { max-width: 1120px; margin: 0 auto; text-align: center; }
 
         .marqueeBar { margin: 2rem auto 1.5rem; max-width: 1120px; overflow: hidden; height: 44px; }
-        
-        .marquee { display: inline-flex; align-items: center; gap: 0.5rem; white-space: nowrap; animation: scroll 40s linear infinite; will-change: transform; }
-        @keyframes scroll { from { transform: translateX(0%);} to { transform: translateX(-50%);} } to { transform: translateX(0%);} }
+        .marquee { display: inline-flex; align-items: center; gap: 0.5rem; white-space: nowrap; animation: scroll 40s linear infinite; }
+        @keyframes scroll { from { transform: translateX(0%);} to { transform: translateX(-50%);} }
         .chip { display: inline-flex; align-items: center; padding: 6px 12px; border-radius: 999px; font-size: 12px; letter-spacing: 0.2px; color: #ffffff; background: linear-gradient(180deg, #3a3a3a, #2a2a2a); border: 1px solid rgba(255,255,255,0.18); }
 
-        /* .intro removed */
-        .name { font-size: clamp(3rem, 8vw, 6rem); margin: 0.5rem 0 0.5rem; font-weight: 800; letter-spacing: -0.02em; }
-        .italicName { font-family: var(--font-playfair), Georgia, "Times New Roman", serif; font-style: italic; font-weight: 600; }
+        .name { font-size: clamp(3rem, 8vw, 6rem); margin: 0.5rem 0; font-weight: 800; letter-spacing: -0.02em; }
+        .italicName { font-family: var(--font-playfair), serif; font-style: italic; font-weight: 600; }
         .tagline { font-size: clamp(1rem, 2.5vw, 1.25rem); color: var(--text-mid); margin-top: 0.25rem; }
 
-        .chatPlaceholder {
-          margin: 2rem auto 1rem; max-width: 900px; background: rgba(255,255,255,0.03);
-          border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; overflow: hidden;
-          display: flex; flex-direction: column; height: 420px;
-        }
+        .chatPlaceholder { margin: 2rem auto 1rem; max-width: 900px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; height: 420px; }
         .chatHeader { padding: 0.75rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 0.95rem; color: var(--text-mid); text-align: left; }
         .chatBody { flex: 1; padding: 1rem; display: grid; gap: 0.75rem; align-content: start; }
         .message { height: 18px; border-radius: 8px; background: linear-gradient(90deg, rgba(255,255,255,0.08), rgba(255,255,255,0.16), rgba(255,255,255,0.08)); background-size: 200% 100%; animation: shimmer 2s linear infinite; }
@@ -166,26 +156,21 @@ export default function Home() {
 
         .belowChat { max-width: 900px; margin: 0.75rem auto 0; color: var(--text-mid); font-size: 0.975rem; }
 
-        .fadeBottom {
-          position: absolute; left: 0; right: 0; bottom: 0; height: 140px;
-          background: linear-gradient(180deg, rgba(0,0,0,0) 0%, var(--bg-white) 100%);
-          pointer-events: none;
-        }
+        .fadeBottom { position: absolute; left: 0; right: 0; bottom: 0; height: 140px; background: linear-gradient(180deg, rgba(0,0,0,0) 0%, var(--bg-white) 100%); }
 
         /* ===== Section 2 (About) ===== */
         .about { background: var(--bg-white); color: var(--text-dark); padding: 6rem 1.25rem; }
         .aboutTitle { max-width: 1120px; margin: 0 auto; font-size: clamp(1.75rem, 3.2vw, 2.25rem); font-weight: 800; letter-spacing: -0.02em; }
-        .aboutUnderline { width: 96px; height: 3px; background: #111; margin: 0.5rem auto 2rem  calc((100vw - 1120px)/2 + 1.25rem); border-radius: 2px; }
-
-        .cv { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: repeat(1, minmax(0, 1fr)); gap: 1rem; }
+        .aboutUnderline { width: 96px; height: 3px; background: #111; margin: 0.5rem auto 2rem calc((100vw - 1120px)/2 + 1.25rem); border-radius: 2px; }
+        .cv { max-width: 1120px; margin: 0 auto; display: grid; gap: 1rem; }
         @media (min-width: 900px) { .cv { grid-template-columns: repeat(3, 1fr); } }
-        .cvItem { border: 1px solid var(--border); border-radius: 14px; padding: 1.25rem; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+        .cvItem { border: 1px solid #e0e0e0; border-radius: 14px; padding: 1.25rem; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
         .cvItem h3 { margin: 0; font-size: 1.125rem; }
         .cvMeta { margin: 0.25rem 0 0.75rem; color: #666; font-size: 0.9rem; }
         .cvText { margin: 0; line-height: 1.55; }
 
         /* ===== Section 3 (CTA) ===== */
-        .cta { background: var(--bg-black); color: var(--text-high); padding: 5rem 1.25rem; text-align: center; }
+        .cta { background-color: var(--bg-black); color: var(--text-high); padding: 5rem 1.25rem; text-align: center; }
         .ctaBig { font-size: clamp(1.75rem, 3.2vw, 2.25rem); margin: 0 0 0.25rem; }
         .ctaSmall { color: var(--text-mid); margin: 0; font-size: 1.125rem; }
 
