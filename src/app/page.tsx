@@ -44,10 +44,10 @@ export default function Home() {
           {/* Chatbox */}
           <div className="chatPlaceholder" role="region" aria-label="AI Chatbot placeholder">
             <div className="chatProfile">
-              <img src="/chatbot-avatar.png" alt="Lennart Avatar" className="chatAvatar" />
+              <img src="/src/Profil6.png" alt="Lennart Avatar" className="chatAvatar" />
               <div>
-                <p className="chatName">Lennart (AI Clone)</p>
-                <p className="chatTitle">Digital Marketing Specialist</p>
+                <p className="chatName">Lennart Niehausmeier</p>
+                <p className="chatTitle">Talk to my AI Clone to find out more about me.</p>
               </div>
             </div>
 
@@ -171,8 +171,8 @@ export default function Home() {
         .chatPlaceholder { position:relative; z-index:2; margin:2rem auto 1rem; max-width:900px; background:#0b0b0b; border:1px solid #1f1f1f; border-radius:16px; overflow:hidden; display:flex; flex-direction:column; height:460px; box-shadow:0 0 0 1px rgba(255,255,255,.03) inset; }
         .chatProfile { display:flex; align-items:center; gap:1rem; padding:1rem; border-bottom:1px solid rgba(255,255,255,.08); }
         .chatAvatar { width:56px; height:56px; border-radius:50%; object-fit:cover; border:2px solid rgba(255,255,255,.2); }
-        .chatName { margin:0; font-weight:600; font-size:1rem; }
-        .chatTitle { margin:0; font-size:.875rem; color:var(--text-mid); }
+        .chatName { margin:0; font-weight:600; font-size:1rem; font-align:left;}
+        .chatTitle { margin:0; font-size:.875rem; color:var(--text-mid); font-align:left; }
 
         .chatBody { flex:1; padding:1rem; display:grid; gap:.75rem; align-content:start; }
         .message { height:18px; border-radius:8px; background:linear-gradient(90deg, rgba(255,255,255,.08), rgba(255,255,255,.16), rgba(255,255,255,.08)); background-size:200% 100%; animation: shimmer 2s linear infinite; }
