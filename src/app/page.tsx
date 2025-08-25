@@ -254,7 +254,7 @@ export default function Home() {
       {/* ===== Section 3: CTA ===== */}
       <section
         className="cta text-white"
-        style={{ backgroundColor: "#ededed", color: "#000000" }}
+        style={{ backgroundColor: "#f3f3f3", color: "#000000" }}
       >
         <p className="ctaBig">
           <strong>Worth to talk?</strong>
