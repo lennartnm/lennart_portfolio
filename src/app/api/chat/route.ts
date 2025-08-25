@@ -80,9 +80,8 @@ function buildRequestBody({
   const body: any = {
     model,
     input,
-    // Neu: statt response_format → text.format
-    modalities: ["text"],          // optional, aber okay
-    text: { format: "plain" },     // oder "markdown" – dein Call
+    // Neu (gültig): Ausgabemodus über text.format steuern
+    text: { format: "plain" }, // oder "markdown"
   };
 
   if (vectorStoreId) {
