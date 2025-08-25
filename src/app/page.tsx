@@ -30,21 +30,17 @@ export default function Home() {
     <main className={`${inter.variable} ${playfair.variable}`}>
       {/* ===== Hero / Section 1 ===== */}
       <section className="hero">
-        {/* Floating keyword chips (endless flow) */}
-        <div className="marqueeWrap" aria-hidden>
-          <div className="marquee">
-            {KEYWORDS.concat(KEYWORDS).map((kw, i) => (
-              <span className="chip" key={`chip-${i}`}>{kw}</span>
-            ))}
-          </div>
-        </div>
-
-        {/* Headline */}
+        {/* Headline + Keywords */}
         <div className="heroInner">
-          <p className="intro">Hi, I&apos;m</p>
-          <h1 className="name">
-            <span className="italicName">Lennart</span>
-          </h1>
+          {/* Flowing keyword chips (endless flow) */}
+          <div className="marqueeBar" aria-hidden>
+            <div className="marquee">
+              {KEYWORDS.concat(KEYWORDS).map((kw, i) => (
+                <span className="chip" key={`chip-${i}`}>{kw}</span>
+              ))}
+            </div>
+          </div>
+          <h1 className="name">Hi, I&apos;m <span className="italicName">Lennart</span></h1>
           <p className="tagline">Entrepreneurial driven Digital Marketing Specialist</p>
 
           {/* Chatbox placeholder */}
@@ -143,21 +139,14 @@ export default function Home() {
         }
         .heroInner { max-width: 1120px; margin: 0 auto; text-align: center; }
 
-        .marqueeWrap {
-          position: absolute; inset: 0 auto auto 0; top: 1rem; width: 100%; height: 44px;
-          overflow: hidden; pointer-events: none;
-        }
-        .marquee {
-          display: inline-flex; align-items: center; gap: 0.5rem;
-          white-space: nowrap;
-          animation: scroll 40s linear infinite;
-          will-change: transform;
-        }
-        @keyframes scroll { from { transform: translateX(-50%);} to { transform: translateX(0%);} }
-        .chip { display: inline-flex; align-items: center; padding: 6px 10px; border-radius: 999px; font-size: 12px; letter-spacing: 0.2px; background: var(--chip-bg); border: 1px solid var(--chip-br); backdrop-filter: blur(2px); }
+        .marqueeBar { margin: 2rem auto 1.5rem; max-width: 1120px; overflow: hidden; height: 44px; }
+        
+        .marquee { display: inline-flex; align-items: center; gap: 0.5rem; white-space: nowrap; animation: scroll 40s linear infinite; will-change: transform; }
+        @keyframes scroll { from { transform: translateX(0%);} to { transform: translateX(-50%);} } to { transform: translateX(0%);} }
+        .chip { display: inline-flex; align-items: center; padding: 6px 12px; border-radius: 999px; font-size: 12px; letter-spacing: 0.2px; color: #ffffff; background: linear-gradient(180deg, #3a3a3a, #2a2a2a); border: 1px solid rgba(255,255,255,0.18); }
 
-        .intro { margin-top: 5rem; font-size: 1.125rem; color: var(--text-mid); }
-        .name { font-size: clamp(3rem, 8vw, 6rem); margin: 0.25rem 0 0.5rem; font-weight: 800; letter-spacing: -0.02em; }
+        /* .intro removed */
+        .name { font-size: clamp(3rem, 8vw, 6rem); margin: 0.5rem 0 0.5rem; font-weight: 800; letter-spacing: -0.02em; }
         .italicName { font-family: var(--font-playfair), Georgia, "Times New Roman", serif; font-style: italic; font-weight: 600; }
         .tagline { font-size: clamp(1rem, 2.5vw, 1.25rem); color: var(--text-mid); margin-top: 0.25rem; }
 
