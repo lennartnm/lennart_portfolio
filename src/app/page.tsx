@@ -43,7 +43,7 @@ export default function Home() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // ---> Auto-Scroll: immer ans Ende springen, wenn neue Messages/Loading
+  // ---> Auto-Scroll an das Ende bei neuer Antwort
   const chatBodyRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     const el = chatBodyRef.current;
@@ -105,6 +105,48 @@ export default function Home() {
       setLoading(false);
     }
   }
+
+  // ===== About me Carousel =====
+  const aboutCards = [
+    {
+      title: "Station 1",
+      meta: "2021–2022 • Growth Lead • Firma A",
+      text:
+        "Skalierte Paid-Kanäle, Reporting automatisiert, CAC um 18% gesenkt.",
+    },
+    {
+      title: "Station 2",
+      meta: "2022–2023 • Head of Demand Gen • Firma B",
+      text:
+        "Full-Funnel-Programme, ABM-Piloten, Pipeline QoQ +35%.",
+    },
+    {
+      title: "Station 3",
+      meta: "2023–2024 • Performance Marketing • Firma C",
+      text:
+        "SEO/SEM-Relaunch, Tracking-Härtung, ROAS +42%.",
+    },
+    {
+      title: "Station 4",
+      meta: "2024 • Partnerships • Firma D",
+      text:
+        "Co-Marketing-Motion aufgebaut, Partner-Pipeline verdoppelt.",
+    },
+    {
+      title: "Station 5",
+      meta: "2024–2025 • Marketing Automation • Firma E",
+      text:
+        "Journeys & Scoring in HubSpot, SQL-Rate +22%.",
+    },
+  ];
+
+  const aboutRef = useRef<HTMLDivElement | null>(null);
+  const scrollAbout = (dir: "left" | "right") => {
+    const el = aboutRef.current;
+    if (!el) return;
+    const amount = Math.max(320, el.clientWidth * 0.9);
+    el.scrollBy({ left: dir === "left" ? -amount : amount, behavior: "smooth" });
+  };
 
   return (
     <main className={`${inter.variable} ${playfair.variable}`}>
@@ -182,54 +224,98 @@ export default function Home() {
                 className="sendBtn"
                 type="submit"
                 disabled={loading || !input.trim()}
+                aria-label="Send message"
               >
                 Send
               </button>
             </form>
           </div>
 
-         {/* Text unter Chat */} <div className="belowChat"> <p> Platzhalter für Text. Hier kannst du Kontext, Angebot oder einen kurzen Elevator Pitch ergänzen. </p> </div> </div>
-
+          {/* Text unter Chat */}
+          <div className="belowChat">
+            <p>
+              Platzhalter für Text. Hier kannst du Kontext, Angebot oder einen
+              kurzen Elevator Pitch ergänzen.
+            </p>
+          </div>
+        </div>
 
         {/* Black → White fade */}
         <div className="fadeBottom" aria-hidden />
       </section>
 
-      {/* ===== Section 2: About me ===== */}
+      {/* ===== Section 2: About me (Carousel) ===== */}
       <section className="about">
-        <h2 className="aboutTitle">About me</h2>
-        <div className="aboutUnderline" />
+        <div className="aboutInner">
+          <h2 className="aboutTitle">About me</h2>
+          <div className="aboutUnderline" />
 
-        <div className="cv">
-          <article className="cvItem">
-            <header>
-              <h3>Station 1</h3>
-              <p className="cvMeta">Zeitraum • Rolle • Firma</p>
-            </header>
-            <p className="cvText">
-              Kurzbeschreibung deiner Aufgaben, Erfolge und Verantwortlichkeiten.
-            </p>
-          </article>
+          <div className="aboutCarouselWrap" aria-label="About me carousel">
+            <button
+              className="aboutArrow left"
+              onClick={() => scrollAbout("left")}
+              aria-label="Scroll left"
+              type="button"
+            >
+              ‹
+            </button>
 
-          <article className="cvItem">
-            <header>
-              <h3>Station 2</h3>
-              <p className="cvMeta">Zeitraum • Rolle • Firma</p>
-            </header>
-            <p className="cvText">
-              Kurzbeschreibung deiner Aufgaben, Erfolge und Verantwortlichkeiten.
-            </p>
-          </article>
+            <div className="aboutFade aboutFadeLeft" aria-hidden />
+            <div className="aboutFade aboutFadeRight" aria-hidden />
 
-          <article className="cvItem">
-            <header>
-              <h3>Station 3</h3>
-              <p className="cvMeta">Zeitraum • Rolle • Firma</p>
-            </header>
-            <p className="cvText">
-              Kurzbeschreibung deiner Aufgaben, Erfolge und Verantwortlichkeiten.
-            </p>
-          </article>
+            <div className="aboutCarousel" ref={aboutRef}>
+              {aboutCards.map((c, idx) => (
+                <article className="cvItem snap" key={idx}>
+                  <header>
+                    <h3>{c.title}</h3>
+                    <p className="cvMeta">{c.meta}</p>
+                  </header>
+                  <p className="cvText">{c.text}</p>
+                </article>
+              ))}
+            </div>
+
+            <button
+              className="aboutArrow right"
+              onClick={() => scrollAbout("right")}
+              aria-label="Scroll right"
+              type="button"
+            >
+              ›
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== Section 2b: Roadmap ===== */}
+      <section className="roadmap">
+        <div className="roadmapInner">
+          <h2 className="roadmapTitle">Roadmap</h2>
+          <div className="roadmapUnderline" />
+          <div className="roadmapSteps">
+            <div className="roadmapRail" aria-hidden />
+            <div className="step">
+              <div className="dot" />
+              <h3>01 • Discovery</h3>
+              <p>
+                Quick audit & Ziele klären: ICP, Funnel-Health, bestehende Kanäle.
+              </p>
+            </div>
+            <div className="step">
+              <div className="dot" />
+              <h3>02 • Build & Launch</h3>
+              <p>
+                Tracking & Automation, Always-on Paid/SEO, Experimente priorisieren.
+              </p>
+            </div>
+            <div className="step">
+              <div className="dot" />
+              <h3>03 • Scale</h3>
+              <p>
+                Winning Plays ausrollen, Partner/Content-Motions, Effizienz heben.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -527,7 +613,7 @@ export default function Home() {
           gap: 0.5rem;
           align-content: start;
           overflow-y: auto;
-          scroll-behavior: smooth; /* zusätzlich zum JS-Scroll */
+          scroll-behavior: smooth;
         }
         .bubble {
           max-width: 80%;
@@ -537,7 +623,7 @@ export default function Home() {
           word-wrap: break-word;
           white-space: pre-wrap;
           font-size: 0.95rem;
-          text-align: left; /* linksbündig */
+          text-align: left;
         }
         .bubble.user {
           justify-self: end;
@@ -545,7 +631,7 @@ export default function Home() {
           border: 1px solid rgba(255, 255, 255, 0.14);
         }
         .bubble.assistant {
-          justify-self: start; /* Antworten links */
+          justify-self: start;
           background: rgba(255, 255, 255, 0.03);
           border: 1px solid rgba(255, 255, 255, 0.1);
         }
@@ -599,46 +685,61 @@ export default function Home() {
           );
         }
 
-        /* ===== About ===== */
+        /* ===== About (Carousel) ===== */
         .about {
           background: var(--bg-white);
           color: var(--text-dark);
-          padding: 6rem 1.25rem;
+          padding: 6rem 1.25rem 4rem;
+        }
+        .aboutInner {
+          max-width: 1120px;
+          margin: 0 auto;
         }
         .aboutTitle {
-          max-width: 1120px;
-          margin: 0 auto;
+          text-align: center;
           font-size: clamp(1.75rem, 3.2vw, 2.25rem);
           font-weight: 800;
+          margin: 0;
         }
         .aboutUnderline {
-          width: 96px;
+          width: 120px;
           height: 3px;
           background: #111;
-          margin: 0.5rem auto 2rem calc((100vw - 1120px) / 2 + 1.25rem);
+          margin: 0.5rem auto 2rem auto;
           border-radius: 2px;
         }
-        .cv {
-          max-width: 1120px;
-          margin: 0 auto;
-          display: grid;
-          gap: 1rem;
+
+        .aboutCarouselWrap {
+          position: relative;
+          padding: 0 3rem; /* Platz für die Pfeile */
         }
-        @media (min-width: 900px) {
-          .cv {
-            grid-template-columns: repeat(3, 1fr);
-          }
+        .aboutCarousel {
+          display: flex;
+          gap: 1rem;
+          overflow-x: auto;
+          scroll-snap-type: x mandatory;
+          padding-bottom: 0.5rem;
+          scrollbar-width: none; /* Firefox */
+        }
+        .aboutCarousel::-webkit-scrollbar {
+          display: none; /* Webkit */
         }
         .cvItem {
+          min-width: 300px;
+          max-width: 360px;
+          flex: 0 0 auto;
           border: 1px solid #e0e0e0;
           border-radius: 14px;
           padding: 1.25rem;
           background: #fff;
           box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
         }
+        .snap {
+          scroll-snap-align: start;
+        }
         .cvItem h3 {
           margin: 0;
-          font-size: 1.125rem;
+          font-size: 1.1rem;
         }
         .cvMeta {
           margin: 0.25rem 0 0.75rem;
@@ -648,6 +749,134 @@ export default function Home() {
         .cvText {
           margin: 0;
           line-height: 1.55;
+        }
+
+        .aboutArrow {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 40px;
+          height: 40px;
+          border-radius: 999px;
+          border: 1px solid #e5e5e5;
+          background: #ffffff;
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+          display: grid;
+          place-items: center;
+          font-size: 24px;
+          line-height: 1;
+          cursor: pointer;
+          transition: transform 0.15s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+          z-index: 1;
+          opacity: 0.9;
+        }
+        .aboutArrow:hover {
+          transform: translateY(-50%) scale(1.05);
+          box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
+          opacity: 1;
+        }
+        .aboutArrow.left {
+          left: 0.25rem;
+        }
+        .aboutArrow.right {
+          right: 0.25rem;
+        }
+
+        .aboutFade {
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          width: 48px;
+          pointer-events: none;
+        }
+        .aboutFadeLeft {
+          left: 3rem;
+          background: linear-gradient(90deg, rgba(255, 255, 255, 1), transparent);
+        }
+        .aboutFadeRight {
+          right: 3rem;
+          background: linear-gradient(270deg, rgba(255, 255, 255, 1), transparent);
+        }
+
+        /* ===== Roadmap ===== */
+        .roadmap {
+          background: var(--bg-white);
+          color: var(--text-dark);
+          padding: 2rem 1.25rem 6rem;
+        }
+        .roadmapInner {
+          max-width: 1120px;
+          margin: 0 auto;
+        }
+        .roadmapTitle {
+          text-align: center;
+          font-size: clamp(1.6rem, 3vw, 2.1rem);
+          font-weight: 800;
+          margin: 0;
+        }
+        .roadmapUnderline {
+          width: 120px;
+          height: 3px;
+          background: #111;
+          margin: 0.5rem auto 2rem auto;
+          border-radius: 2px;
+        }
+
+        .roadmapSteps {
+          position: relative;
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 1.25rem;
+        }
+        .roadmapRail {
+          display: none;
+        }
+        .step {
+          background: #fff;
+          border: 1px solid #e5e5e5;
+          border-radius: 14px;
+          padding: 1.25rem;
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+          text-align: left;
+        }
+        .step h3 {
+          margin: 0.25rem 0 0.5rem;
+          font-size: 1.05rem;
+        }
+        .step p {
+          margin: 0;
+          color: #444;
+          line-height: 1.55;
+        }
+        .dot {
+          width: 14px;
+          height: 14px;
+          border-radius: 999px;
+          background: #111;
+          box-shadow: 0 0 0 4px #f1f1f1;
+        }
+
+        @media (min-width: 900px) {
+          .roadmapSteps {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+          }
+          .roadmapRail {
+            display: block;
+            position: absolute;
+            left: 8%;
+            right: 8%;
+            top: 35px; /* auf Höhe der Dots */
+            height: 2px;
+            background: #e9e9e9;
+            z-index: 0;
+          }
+          .step {
+            text-align: center;
+          }
+          .dot {
+            margin: 0 auto 0.5rem auto;
+          }
         }
 
         /* ===== CTA ===== */
