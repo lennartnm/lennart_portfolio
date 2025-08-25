@@ -192,8 +192,7 @@ export default function Home() {
           {/* Text unter Chat */}
           <div className="belowChat">
             <p>
-              Platzhalter für Text. Hier kannst du Kontext, Angebot oder einen
-              kurzen Elevator Pitch ergänzen.
+          
             </p>
           </div>
         </div>
@@ -227,7 +226,7 @@ export default function Home() {
               <div className="skillIcon" aria-hidden>💳</div>
               <h3 className="skillName">Performance Marketing</h3>
               <p className="skillText">
-   Driving revenue through Paid Social and Paid Search Ads,
+   Driving revenue through Paid Social and Paid Search Ads.
               </p>
             </article>
 
@@ -255,7 +254,7 @@ export default function Home() {
       {/* ===== Section 3: CTA ===== */}
       <section
         className="cta text-white"
-        style={{ backgroundColor: "#000000", color: "#ffffff" }}
+        style={{ backgroundColor: "#fefefe", color: "#000000" }}
       >
         <p className="ctaBig">
           <strong>Worth to talk?</strong>
