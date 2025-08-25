@@ -24,7 +24,7 @@ export default function Home() {
   return (
     <main className={`${inter.variable} ${playfair.variable}`}>
       {/* ===== Hero / Section 1 ===== */}
-      <section className="hero">
+      <section className="hero bg-black text-white">
         <div className="heroInner">
           {/* Flowing keyword chips */}
           <div className="marqueeBar" aria-hidden>
@@ -96,7 +96,7 @@ export default function Home() {
       </section>
 
       {/* ===== Section 3 ===== */}
-      <section className="cta">
+      <section className="cta bg-black text-white">
         <p className="ctaBig"><strong>Sounds like a match?</strong></p>
         <p className="ctaSmall">Let&apos;s have a first talk</p>
       </section>
