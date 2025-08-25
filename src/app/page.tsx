@@ -19,12 +19,17 @@ const KEYWORDS = [
   "Demand Generation",
   "Marketing Automation",
   "Performance Marketing",
-  "SEO",
-  "SEM",
-  "Paid Ads",
-  "Partnerships",
-  "Affiliate Marketing",
+  "Tracking",
+  "Search Engine Optimization",
+  "AI Automation",
   "Artificial Intelligence",
+  "Paid Ads",
+  "HTML / CSS",
+  "Affiliate Marketing",
+  "Paid Search Ads",
+  "AI Search Optimization",
+  "Digital Strategy",
+  "Full Funnel Optimization",
 ];
 
 export default function Home() {
@@ -124,10 +129,10 @@ export default function Home() {
 
           {/* Headline */}
           <h1 className="name">
-            Hi, I&apos;m <span className="italicName">Lennart</span>
+            Hi, I&apos;m <span className="italicName">Lennart.</span>
           </h1>
           <p className="tagline">
-            Entrepreneurial driven Digital Marketing Specialist
+            Entrepreneurial driven Digital Growth Specialist looking for the next opportunity.
           </p>
 
           {/* Chatbox (funktional) */}
