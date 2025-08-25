@@ -22,6 +22,7 @@ export async function POST(req: NextRequest) {
 
     if (!apiKey) return json({ error: "Missing OPENAI_API_KEY" }, 500);
 
+    // Responses API input
     const input = [
       {
         role: "system",
@@ -39,23 +40,22 @@ export async function POST(req: NextRequest) {
       })),
     ];
 
-    // Erst mit File Search versuchen (wenn gesetzt)
-    const withFileSearch = buildRequestBody(model, input, vectorStoreId);
-    let data = await callOpenAI(apiKey, withFileSearch);
+    // --- 1. Versuch: mit File Search (falls Vector Store gesetzt) ---
+    const withFS = buildRequestBody({ model, input, vectorStoreId });
+    let data = await callOpenAI(apiKey, withFS);
 
-    // Wenn 400 & Hinweis auf file_search/vector_store => ohne File Search nochmal versuchen
+    // --- Fallback: ohne File Search, wenn 400 wegen Tool/Vector Store ---
     if (data.__error && data.__status === 400 && looksLikeFileSearchIssue(data)) {
-      const withoutFileSearch = buildRequestBody(model, input, undefined);
-      data = await callOpenAI(apiKey, withoutFileSearch);
+      const noFS = buildRequestBody({ model, input, vectorStoreId: undefined });
+      data = await callOpenAI(apiKey, noFS);
     }
 
     if (data.__error) {
-      // Lesbare Fehler zurückgeben
       return json(
         {
           error: `OpenAI error (${data.__status})`,
           message: data.__message,
-          details: data.__raw, // für Debug in Vercel Logs nützlich (bei Bedarf entfernen)
+          details: data.__raw,
         },
         data.__status
       );
@@ -68,16 +68,27 @@ export async function POST(req: NextRequest) {
   }
 }
 
-function buildRequestBody(model: string, input: any, vectorStoreId?: string) {
-  const body: any = { model, input };
+function buildRequestBody({
+  model,
+  input,
+  vectorStoreId,
+}: {
+  model: string;
+  input: any;
+  vectorStoreId?: string;
+}) {
+  const body: any = {
+    model,
+    input,
+    // Neu: statt response_format → text.format
+    modalities: ["text"],          // optional, aber okay
+    text: { format: "plain" },     // oder "markdown" – dein Call
+  };
 
   if (vectorStoreId) {
     body.tools = [{ type: "file_search" }];
     body.tool_resources = { file_search: { vector_store_ids: [vectorStoreId] } };
   }
-
-  // Optional, schadet nicht:
-  body.response_format = { type: "text" };
 
   return body;
 }
@@ -128,7 +139,7 @@ function looksLikeFileSearchIssue(errObj: any) {
   );
 }
 
-/** zieht Text aus verschiedenen möglichen Responses-Formaten */
+// Text robust extrahieren
 function extractTextFromResponses(data: any): string {
   if (typeof data?.output_text === "string" && data.output_text.trim()) {
     return data.output_text.trim();
