@@ -106,48 +106,6 @@ export default function Home() {
     }
   }
 
-  // ===== About me Carousel =====
-  const aboutCards = [
-    {
-      title: "Station 1",
-      meta: "2021–2022 • Growth Lead • Firma A",
-      text:
-        "Skalierte Paid-Kanäle, Reporting automatisiert, CAC um 18% gesenkt.",
-    },
-    {
-      title: "Station 2",
-      meta: "2022–2023 • Head of Demand Gen • Firma B",
-      text:
-        "Full-Funnel-Programme, ABM-Piloten, Pipeline QoQ +35%.",
-    },
-    {
-      title: "Station 3",
-      meta: "2023–2024 • Performance Marketing • Firma C",
-      text:
-        "SEO/SEM-Relaunch, Tracking-Härtung, ROAS +42%.",
-    },
-    {
-      title: "Station 4",
-      meta: "2024 • Partnerships • Firma D",
-      text:
-        "Co-Marketing-Motion aufgebaut, Partner-Pipeline verdoppelt.",
-    },
-    {
-      title: "Station 5",
-      meta: "2024–2025 • Marketing Automation • Firma E",
-      text:
-        "Journeys & Scoring in HubSpot, SQL-Rate +22%.",
-    },
-  ];
-
-  const aboutRef = useRef<HTMLDivElement | null>(null);
-  const scrollAbout = (dir: "left" | "right") => {
-    const el = aboutRef.current;
-    if (!el) return;
-    const amount = Math.max(320, el.clientWidth * 0.9);
-    el.scrollBy({ left: dir === "left" ? -amount : amount, behavior: "smooth" });
-  };
-
   return (
     <main className={`${inter.variable} ${playfair.variable}`}>
       {/* ===== Section 1: Hero ===== */}
@@ -244,45 +202,52 @@ export default function Home() {
         <div className="fadeBottom" aria-hidden />
       </section>
 
-      {/* ===== Section 2: About me (Carousel) ===== */}
-      <section className="about">
-        <div className="aboutInner">
-          <h2 className="aboutTitle">About me</h2>
-          <div className="aboutUnderline" />
+      {/* ===== Section 2: Skillset (Intro links + 4 Cards) ===== */}
+      <section className="skills">
+        <div className="skillsInner">
+          {/* Intro links */}
+          <aside className="skillsIntro">
+            <h2 className="skillsTitle">Skillset</h2>
+            <p className="skillsLead">
+              With skills in over 4 different fields of growth & marketing,
+              I’m a strong partner when it comes to shipping full-funnel projects.
+              Whatever your needs are, I can jump in and take on the challenge.
+            </p>
+          </aside>
 
-          <div className="aboutCarouselWrap" aria-label="About me carousel">
-            <button
-              className="aboutArrow left"
-              onClick={() => scrollAbout("left")}
-              aria-label="Scroll left"
-              type="button"
-            >
-              ‹
-            </button>
+          {/* 4 Cards rechts */}
+          <div className="skillsGrid">
+            <article className="skillCard">
+              <div className="skillIcon" aria-hidden>📈</div>
+              <h3 className="skillName">Growth / Demand Gen</h3>
+              <p className="skillText">
+                Full-funnel Programme, ABM-Piloten, stetige Pipeline-Hebel.
+              </p>
+            </article>
 
-            <div className="aboutFade aboutFadeLeft" aria-hidden />
-            <div className="aboutFade aboutFadeRight" aria-hidden />
+            <article className="skillCard">
+              <div className="skillIcon" aria-hidden>💳</div>
+              <h3 className="skillName">Performance Marketing</h3>
+              <p className="skillText">
+                Paid Search & Paid Social skalieren, ROAS steigern, Tests priorisieren.
+              </p>
+            </article>
 
-            <div className="aboutCarousel" ref={aboutRef}>
-              {aboutCards.map((c, idx) => (
-                <article className="cvItem snap" key={idx}>
-                  <header>
-                    <h3>{c.title}</h3>
-                    <p className="cvMeta">{c.meta}</p>
-                  </header>
-                  <p className="cvText">{c.text}</p>
-                </article>
-              ))}
-            </div>
+            <article className="skillCard">
+              <div className="skillIcon" aria-hidden>🤖</div>
+              <h3 className="skillName">Automation & Tracking</h3>
+              <p className="skillText">
+                Journeys, Lead-Scoring, Attribution & sauberes Measurement.
+              </p>
+            </article>
 
-            <button
-              className="aboutArrow right"
-              onClick={() => scrollAbout("right")}
-              aria-label="Scroll right"
-              type="button"
-            >
-              ›
-            </button>
+            <article className="skillCard">
+              <div className="skillIcon" aria-hidden>🔎</div>
+              <h3 className="skillName">SEO / Content</h3>
+              <p className="skillText">
+                Technische Basis, Intent-Content, AI-gestützte Workflows.
+              </p>
+            </article>
           </div>
         </div>
       </section>
@@ -685,117 +650,70 @@ export default function Home() {
           );
         }
 
-        /* ===== About (Carousel) ===== */
-        .about {
+        /* ===== Skillset ===== */
+        .skills {
           background: var(--bg-white);
           color: var(--text-dark);
           padding: 6rem 1.25rem 4rem;
         }
-        .aboutInner {
+        .skillsInner {
           max-width: 1120px;
           margin: 0 auto;
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 2rem;
         }
-        .aboutTitle {
-          text-align: center;
-          font-size: clamp(1.75rem, 3.2vw, 2.25rem);
+        .skillsIntro {
+          max-width: 640px;
+        }
+        .skillsTitle {
+          font-size: clamp(1.9rem, 3.2vw, 2.5rem);
           font-weight: 800;
+          margin: 0 0 0.75rem 0;
+        }
+        .skillsLead {
           margin: 0;
+          color: #444;
+          line-height: 1.6;
+          font-size: clamp(1rem, 1.6vw, 1.05rem);
         }
-        .aboutUnderline {
-          width: 120px;
-          height: 3px;
-          background: #111;
-          margin: 0.5rem auto 2rem auto;
-          border-radius: 2px;
-        }
-
-        .aboutCarouselWrap {
-          position: relative;
-          padding: 0 3rem; /* Platz für die Pfeile */
-        }
-        .aboutCarousel {
-          display: flex;
+        .skillsGrid {
+          display: grid;
+          grid-template-columns: 1fr;
           gap: 1rem;
-          overflow-x: auto;
-          scroll-snap-type: x mandatory;
-          padding-bottom: 0.5rem;
-          scrollbar-width: none; /* Firefox */
         }
-        .aboutCarousel::-webkit-scrollbar {
-          display: none; /* Webkit */
-        }
-        .cvItem {
-          min-width: 300px;
-          max-width: 360px;
-          flex: 0 0 auto;
-          border: 1px solid #e0e0e0;
+        .skillCard {
+          background: #fff;
+          border: 1px solid #e6e6e6;
           border-radius: 14px;
           padding: 1.25rem;
-          background: #fff;
-          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+          box-shadow: 0 1px 2px rgba(0,0,0,0.04);
         }
-        .snap {
-          scroll-snap-align: start;
-        }
-        .cvItem h3 {
-          margin: 0;
-          font-size: 1.1rem;
-        }
-        .cvMeta {
-          margin: 0.25rem 0 0.75rem;
-          color: #666;
-          font-size: 0.9rem;
-        }
-        .cvText {
-          margin: 0;
-          line-height: 1.55;
-        }
-
-        .aboutArrow {
-          position: absolute;
-          top: 50%;
-          transform: translateY(-50%);
-          width: 40px;
-          height: 40px;
-          border-radius: 999px;
-          border: 1px solid #e5e5e5;
-          background: #ffffff;
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-          display: grid;
-          place-items: center;
+        .skillIcon {
           font-size: 24px;
           line-height: 1;
-          cursor: pointer;
-          transition: transform 0.15s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-          z-index: 1;
-          opacity: 0.9;
+          margin-bottom: 0.5rem;
         }
-        .aboutArrow:hover {
-          transform: translateY(-50%) scale(1.05);
-          box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
-          opacity: 1;
+        .skillName {
+          margin: 0 0 0.4rem 0;
+          font-size: 1.15rem;
+          font-weight: 800;
         }
-        .aboutArrow.left {
-          left: 0.25rem;
+        .skillText {
+          margin: 0;
+          color: #555;
+          line-height: 1.55;
         }
-        .aboutArrow.right {
-          right: 0.25rem;
-        }
-
-        .aboutFade {
-          position: absolute;
-          top: 0;
-          bottom: 0;
-          width: 48px;
-          pointer-events: none;
-        }
-        .aboutFadeLeft {
-          left: 3rem;
-          background: linear-gradient(90deg, rgba(255, 255, 255, 1), transparent);
-        }
-        .aboutFadeRight {
-          right: 3rem;
-          background: linear-gradient(270deg, rgba(255, 255, 255, 1), transparent);
+        @media (min-width: 960px) {
+          .skillsInner {
+            grid-template-columns: 0.9fr 1.1fr; /* Intro : Grid */
+            align-items: start;
+            gap: 3rem;
+          }
+          .skillsGrid {
+            grid-template-columns: repeat(2, minmax(0,1fr));
+            gap: 1.25rem 1rem;
+          }
         }
 
         /* ===== Roadmap ===== */
