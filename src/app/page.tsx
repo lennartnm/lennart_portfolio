@@ -24,7 +24,7 @@ export default function Home() {
   return (
     <main className={`${inter.variable} ${playfair.variable}`}>
       {/* ===== Hero / Section 1 ===== */}
-      <section className="hero bg-black text-white">
+      <section className="hero bg-black text-white" style={{ backgroundColor: '#000000', color: '#ffffff' }}>
         <div className="heroInner">
           {/* Flowing keyword chips */}
           <div className="marqueeBar" aria-hidden>
@@ -96,7 +96,7 @@ export default function Home() {
       </section>
 
       {/* ===== Section 3 ===== */}
-      <section className="cta bg-black text-white">
+      <section className="cta bg-black text-white" style={{ backgroundColor: '#000000', color: '#ffffff' }}>
         <p className="ctaBig"><strong>Sounds like a match?</strong></p>
         <p className="ctaSmall">Let&apos;s have a first talk</p>
       </section>
@@ -111,10 +111,7 @@ export default function Home() {
         <p className="footNote">© {new Date().getFullYear()} Lennart</p>
       </footer>
 
-      <style jsx global>{`
-        body { margin: 0; background: #fff; color: #000; }
-      `}</style>
-
+      
       <style jsx>{`
         :root {
           --bg-black: #000000;
@@ -126,13 +123,7 @@ export default function Home() {
         main { font-family: var(--font-inter), ui-sans-serif; }
 
         /* ===== Section 1 (Hero) ===== */
-        .hero {
-          position: relative;
-          background-color: var(--bg-black);
-          color: var(--text-high);
-          padding: 4rem 1.25rem 8rem;
-          overflow: hidden;
-        }
+        .hero { position: relative; background-color: #000; color: #fff; padding: 4rem 1.25rem 8rem; overflow: hidden; min-height: 100vh; }
         .heroInner { max-width: 1120px; margin: 0 auto; text-align: center; }
 
         .marqueeBar { margin: 2rem auto 1.5rem; max-width: 1120px; overflow: hidden; height: 44px; }
