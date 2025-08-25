@@ -188,19 +188,7 @@ export default function Home() {
             </form>
           </div>
 
-          {/* Text unter Chat */}
-<div className="belowChat">
-  <p>
-    For any further conversation feel free to contact me via{" "}
-    <a
-      href="https://www.linkedin.com/in/lennart-niehausmeier/"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      LinkedIn
-    </a>.
-  </p>
-</div>
+         {/* Text unter Chat */} <div className="belowChat"> <p> Platzhalter für Text. Hier kannst du Kontext, Angebot oder einen kurzen Elevator Pitch ergänzen. </p> </div> </div>
 
 
         {/* Black → White fade */}
