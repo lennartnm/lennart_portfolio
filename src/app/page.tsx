@@ -44,7 +44,7 @@ export default function Home() {
           {/* Chatbox */}
           <div className="chatPlaceholder" role="region" aria-label="AI Chatbot placeholder">
             <div className="chatProfile">
-              <img src="/src/Profil6.png" alt="Lennart Avatar" className="chatAvatar" />
+              <img src="src/Profil6.png" alt="Lennart Avatar" className="chatAvatar" />
               <div>
                 <p className="chatName">Lennart Niehausmeier</p>
                 <p className="chatTitle">Talk to my AI Clone to find out more about me.</p>
