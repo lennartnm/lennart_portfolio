@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { Inter, Playfair_Display } from "next/font/google";
 
@@ -10,6 +10,8 @@ const playfair = Playfair_Display({
   style: ["italic"],
   variable: "--font-playfair",
 });
+
+type Msg = { role: "user" | "assistant"; content: string };
 
 const KEYWORDS = [
   "Digital Marketing",
@@ -26,6 +28,55 @@ const KEYWORDS = [
 ];
 
 export default function Home() {
+  const [messages, setMessages] = useState<Msg[]>([
+    {
+      role: "assistant",
+      content:
+        "Hi, ich bin Lennarts AI-Clone. Was möchtest du wissen? (z. B. SEO, SEM, Paid, Growth, Automation, Demand Gen …)",
+    },
+  ]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const prompt = input.trim();
+    if (!prompt) return;
+
+    const next = [...messages, { role: "user", content: prompt } as Msg];
+    setMessages(next);
+    setInput("");
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          // nur die letzten 15 Nachrichten schicken (Kosten/Context)
+          messages: next.slice(-15),
+        }),
+      });
+
+      const json = await res.json();
+      const reply: string =
+        json?.text || "Sorry, ich konnte gerade nichts zurückgeben.";
+
+      setMessages([...next, { role: "assistant", content: reply } as Msg]);
+    } catch (err: any) {
+      setMessages([
+        ...next,
+        {
+          role: "assistant",
+          content:
+            "Uff, ein Server-Fehler ist passiert. Prüfe bitte OPENAI_API_KEY & Logs.",
+        },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <main className={`${inter.variable} ${playfair.variable}`}>
       {/* ===== Section 1: Hero ===== */}
@@ -55,41 +106,57 @@ export default function Home() {
             Entrepreneurial driven Digital Marketing Specialist
           </p>
 
-          {/* Chatbox */}
+          {/* Chatbox (funktional) */}
           <div
             className="chatPlaceholder"
             role="region"
-            aria-label="AI Chatbot placeholder"
+            aria-label="AI Chatbot"
           >
-           <div className="chatProfile">
-  <div className="avatarWrap">
-    <Image
-      src="/Profil6.png"      // Datei liegt in /public/Profil6.png
-      alt="Lennart Avatar"
-      fill                     // füllt den Wrapper
-      sizes="56px"
-      className="chatAvatar"
-      priority
-    />
-  </div>
-  <div className="chatMeta">
-    <p className="chatName">Lennart Niehausmeier</p>
-    <p className="chatTitle">Talk to my AI Clone to find out more about me.</p>
-  </div>
-</div>
-
+            <div className="chatProfile">
+              <div className="avatarWrap">
+                <Image
+                  src="/Profil6.png"
+                  alt="Lennart Avatar"
+                  fill
+                  sizes="56px"
+                  className="chatAvatar"
+                  priority
+                />
+              </div>
+              <div className="chatMeta">
+                <p className="chatName">Lennart Niehausmeier</p>
+                <p className="chatTitle">
+                  Talk to my AI Clone to find out more about me.
+                </p>
+              </div>
+            </div>
 
             <div className="chatBody">
-              <div className="message skeleton" />
-              <div className="message skeleton" />
-              <div className="message skeleton half" />
+              {messages.map((m, i) => (
+                <div key={i} className={`bubble ${m.role}`}>
+                  {m.content}
+                </div>
+              ))}
+              {loading && <div className="bubble assistant">…</div>}
             </div>
-            <div className="chatInput">
-              <div className="inputFake" />
-              <button className="sendFake" aria-hidden>
+
+            <form className="chatInput" onSubmit={onSubmit}>
+              <input
+                className="inputReal"
+                placeholder="Frag Lennarts AI-Clone …"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                disabled={loading}
+                aria-label="Nachricht eingeben"
+              />
+              <button
+                className="sendBtn"
+                type="submit"
+                disabled={loading || !input.trim()}
+              >
                 Send
               </button>
-            </div>
+            </form>
           </div>
 
           {/* Text unter Chat */}
@@ -176,7 +243,7 @@ export default function Home() {
           font-family: var(--font-inter), ui-sans-serif;
         }
 
-        /* ===== Hero mit Sternen (an den Rändern) ===== */
+        /* ===== Hero mit Sternen an den Rändern ===== */
         .hero {
           position: relative;
           background: #000;
@@ -185,7 +252,6 @@ export default function Home() {
           overflow: hidden;
           min-height: 100vh;
         }
-
         .hero::before,
         .hero::after {
           content: "";
@@ -379,7 +445,7 @@ export default function Home() {
           margin-top: 0.25rem;
         }
 
-        /* Chatbox mit solidem Hintergrund */
+        /* Chatbox */
         .chatPlaceholder {
           position: relative;
           z-index: 2;
@@ -402,19 +468,17 @@ export default function Home() {
           border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
         .avatarWrap {
-  position: relative;
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;     /* macht die Form rund */
-  overflow: hidden;       /* schneidet das Bild sauber rund zu */
-  flex-shrink: 0;         /* verhindert Zusammenquetschen in Flex-Row */
-}
-
-.chatAvatar {
-  object-fit: cover;      /* füllt den Kreis ohne Verzerren */
-}
-
-
+          position: relative;
+          width: 56px;
+          height: 56px;
+          border-radius: 50%;
+          overflow: hidden;
+          flex-shrink: 0;
+          border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        .chatAvatar {
+          object-fit: cover;
+        }
         .chatMeta {
           display: flex;
           flex-direction: column;
@@ -437,32 +501,30 @@ export default function Home() {
           flex: 1;
           padding: 1rem;
           display: grid;
-          gap: 0.75rem;
+          gap: 0.5rem;
           align-content: start;
+          overflow-y: auto;
         }
-        .message {
-          height: 18px;
-          border-radius: 8px;
-          background: linear-gradient(
-            90deg,
-            rgba(255, 255, 255, 0.08),
-            rgba(255, 255, 255, 0.16),
-            rgba(255, 255, 255, 0.08)
-          );
-          background-size: 200% 100%;
-          animation: shimmer 2s linear infinite;
+        .bubble {
+          max-width: 80%;
+          padding: 10px 12px;
+          border-radius: 12px;
+          line-height: 1.35;
+          word-wrap: break-word;
+          white-space: pre-wrap;
+          font-size: 0.95rem;
         }
-        .message.half {
-          width: 55%;
+        .bubble.user {
+          justify-self: end;
+          background: rgba(255, 255, 255, 0.08);
+          border: 1px solid rgba(255, 255, 255, 0.14);
         }
-        @keyframes shimmer {
-          0% {
-            background-position: 200% 0;
-          }
-          100% {
-            background-position: -200% 0;
-          }
+        .bubble.assistant {
+          justify-self: start;
+          background: rgba(255, 255, 255, 0.03);
+          border: 1px solid rgba(255, 255, 255, 0.1);
         }
+
         .chatInput {
           display: flex;
           gap: 0.5rem;
@@ -470,14 +532,19 @@ export default function Home() {
           padding: 0.75rem;
           border-top: 1px solid rgba(255, 255, 255, 0.08);
         }
-        .inputFake {
+        .inputReal {
           flex: 1;
           height: 44px;
           border-radius: 10px;
           background: rgba(255, 255, 255, 0.06);
           border: 1px solid rgba(255, 255, 255, 0.14);
+          padding: 0 12px;
+          color: #fff;
         }
-        .sendFake {
+        .inputReal::placeholder {
+          color: rgba(255, 255, 255, 0.6);
+        }
+        .sendBtn {
           height: 44px;
           padding: 0 1rem;
           border-radius: 10px;
