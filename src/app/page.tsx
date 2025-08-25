@@ -192,7 +192,7 @@ export default function Home() {
           {/* Text unter Chat */}
           <div className="belowChat">
             <p>
-          
+          Worth to talk? Feel free to contact me for a first chat via <u>lennart.niehausmeier@web.de</u>
             </p>
           </div>
         </div>
@@ -201,66 +201,11 @@ export default function Home() {
         <div className="fadeBottom" aria-hidden />
       </section>
 
-      {/* ===== Section 2: Skillset (Intro links + 4 Cards) ===== */}
-      <section className="skills">
-        <div className="skillsInner">
-          {/* Intro links */}
-          <aside className="skillsIntro">
-            <h2 className="skillsTitle">What I enjoy doing</h2>
-            <p className="skillsLead">
-              A selection of activities I'm passionate about.
-            </p>
-          </aside>
-
-          {/* 4 Cards rechts */}
-          <div className="skillsGrid">
-            <article className="skillCard">
-              <div className="skillIcon" aria-hidden>📈</div>
-              <h3 className="skillName">Growth / Demand Gen</h3>
-              <p className="skillText">
-                Validating offers and establishing funnels, that scale.
-              </p>
-            </article>
-
-            <article className="skillCard">
-              <div className="skillIcon" aria-hidden>💳</div>
-              <h3 className="skillName">Performance Marketing</h3>
-              <p className="skillText">
-   Driving revenue through Paid Social and Paid Search Ads.
-              </p>
-            </article>
-
-            <article className="skillCard">
-              <div className="skillIcon" aria-hidden>🤖</div>
-              <h3 className="skillName">Automation, AI & Tracking</h3>
-              <p className="skillText">
-                Analysing data to make smarter decisions, using AI to enhance processes.
-              </p>
-            </article>
-
-            <article className="skillCard">
-              <div className="skillIcon" aria-hidden>🧠</div>
-              <h3 className="skillName">Digital Strategy</h3>
-              <p className="skillText">
-                Thinking strategically how to use combine channels and new ideas.
-              </p>
-            </article>
-          </div>
-        </div>
-      </section>
+   
 
     
 
-      {/* ===== Section 3: CTA ===== */}
-      <section
-        className="cta text-white"
-        style={{ backgroundColor: "#f3f3f3", color: "#000000" }}
-      >
-        <p className="ctaBig">
-          <strong>Worth to talk?</strong>
-        </p>
-        <p className="ctaSmall">Feel free to contact me for a first chat via <u>lennart.niehausmeier@web.de</u></p>
-      </section>
+     
 
       {/* ===== Section 4: Footer ===== */}
       <footer className="footer">
@@ -783,8 +728,8 @@ export default function Home() {
 
         /* ===== Footer ===== */
         .footer {
-          background: #f3f3f3;
-          color: #000000;
+          background: #000000;
+          color: #ffffff;
           padding: 2rem 1.25rem;
           border-top: 1px solid rgba(255, 255, 255, 0.08);
         }
