@@ -175,14 +175,62 @@ export default function Home() {
         }
 
         /* ===== Hero ===== */
-     .hero { position: relative; background-color: #000; color: #fff; padding: 4rem 1.25rem 8rem; overflow: hidden; min-height: 100vh; }
+   .hero {
+  position: relative;
+  background-color: #000;
+  color: #fff;
+  padding: 4rem 1.25rem 8rem;
+  overflow: hidden;
+  min-height: 100vh;
+}
 
-        }
-        .heroInner {
-          max-width: 1120px;
-          margin: 0 auto;
-          text-align: center;
-        }
+/* Sterne Layer */
+.hero::before,
+.hero::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-repeat: repeat;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* große Sterne */
+.hero::before {
+  background-image: radial-gradient(1.5px 1.5px at 10% 20%, rgba(255,255,255,0.9) 99%, transparent 100%),
+                    radial-gradient(1.2px 1.2px at 30% 80%, rgba(255,255,255,0.8) 99%, transparent 100%),
+                    radial-gradient(1.3px 1.3px at 70% 40%, rgba(255,255,255,0.8) 99%, transparent 100%),
+                    radial-gradient(1.8px 1.8px at 90% 60%, rgba(255,255,255,0.9) 99%, transparent 100%),
+                    radial-gradient(1.4px 1.4px at 50% 10%, rgba(255,255,255,0.7) 99%, transparent 100%);
+  opacity: 0.9;
+  animation: shimmer 8s infinite ease-in-out;
+}
+
+/* kleinere Sterne */
+.hero::after {
+  background-image: radial-gradient(1px 1px at 15% 30%, rgba(255,255,255,0.7) 99%, transparent 100%),
+                    radial-gradient(1px 1px at 85% 25%, rgba(255,255,255,0.6) 99%, transparent 100%),
+                    radial-gradient(1px 1px at 65% 75%, rgba(255,255,255,0.7) 99%, transparent 100%),
+                    radial-gradient(1px 1px at 25% 55%, rgba(255,255,255,0.5) 99%, transparent 100%),
+                    radial-gradient(1px 1px at 45% 90%, rgba(255,255,255,0.6) 99%, transparent 100%);
+  opacity: 0.8;
+  animation: shimmer 12s infinite ease-in-out;
+}
+
+@keyframes shimmer {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 0.65; }
+}
+
+/* Inhalt nach vorne holen */
+.heroInner {
+  position: relative;
+  z-index: 1;
+  max-width: 1120px;
+  margin: 0 auto;
+  text-align: center;
+}
+
 
         /* Marquee closer + side fades */
         .marqueeContainer {
