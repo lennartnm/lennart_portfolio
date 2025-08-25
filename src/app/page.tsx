@@ -50,20 +50,26 @@ export default function Home() {
 
   try {
     const res = await fetch("/api/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages: next.slice(-15) }),
-    });
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ messages: next.slice(-15) }),
+});
+const json = await res.json();
 
-    const json = await res.json();
+if (!res.ok) {
+  setMessages([
+    ...next,
+    {
+      role: "assistant",
+      content:
+        (json?.message ? `Fehler: ${json.message}` : json?.error) ||
+        "Server-Fehler. Vercel Function Logs prüfen.",
+    },
+  ]);
+  setLoading(false);
+  return;
+}
 
-    if (!res.ok) {
-      setMessages([
-        ...next,
-        { role: "assistant", content: json?.error || "Server-Fehler." } as Msg,
-      ]);
-      return;
-    }
 
     const reply: string = (json?.text || "").trim();
     setMessages([
