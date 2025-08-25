@@ -32,10 +32,10 @@ export default function CookieBanner() {
         {/* Text */}
         <div className="text-sm text-gray-700 md:pr-4">
           <p className={`${serifClass} font-medium text-gray-900`}>
-            Yes, this website actually uses cookies.
+           
           </p>
           <p className="mt-1 text-gray-600">
-         You can find more information in our{" "}
+          Yes, this website actually uses cookies. You can find more information in our{" "}
             <a
               href="/privacy"
               className="underline decoration-black underline-offset-2 hover:text-black"
