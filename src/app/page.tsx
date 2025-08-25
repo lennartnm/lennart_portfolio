@@ -38,44 +38,55 @@ export default function Home() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const prompt = input.trim();
-    if (!prompt) return;
+ async function onSubmit(e: React.FormEvent) {
+  e.preventDefault();
+  const prompt = input.trim();
+  if (!prompt) return;
 
-    const next = [...messages, { role: "user", content: prompt } as Msg];
-    setMessages(next);
-    setInput("");
-    setLoading(true);
+  const next = [...messages, { role: "user", content: prompt } as Msg];
+  setMessages(next);
+  setInput("");
+  setLoading(true);
 
-    try {
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          // nur die letzten 15 Nachrichten schicken (Kosten/Context)
-          messages: next.slice(-15),
-        }),
-      });
+  try {
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ messages: next.slice(-15) }),
+    });
 
-      const json = await res.json();
-      const reply: string =
-        json?.text || "Sorry, ich konnte gerade nichts zurückgeben.";
+    const json = await res.json();
 
-      setMessages([...next, { role: "assistant", content: reply } as Msg]);
-    } catch (err: any) {
+    if (!res.ok) {
       setMessages([
         ...next,
-        {
-          role: "assistant",
-          content:
-            "Uff, ein Server-Fehler ist passiert. Prüfe bitte OPENAI_API_KEY & Logs.",
-        },
+        { role: "assistant", content: json?.error || "Server-Fehler." } as Msg,
       ]);
-    } finally {
-      setLoading(false);
+      return;
     }
+
+    const reply: string = (json?.text || "").trim();
+    setMessages([
+      ...next,
+      {
+        role: "assistant",
+        content: reply || "Ich konnte diesen Moment keinen Text extrahieren.",
+      } as Msg,
+    ]);
+  } catch (err: any) {
+    setMessages([
+      ...next,
+      {
+        role: "assistant",
+        content:
+          "Netzwerk-/Serverfehler. Bitte Logs prüfen und OPENAI_API_KEY verifizieren.",
+      },
+    ]);
+  } finally {
+    setLoading(false);
   }
+}
+
 
   return (
     <main className={`${inter.variable} ${playfair.variable}`}>
