@@ -545,7 +545,8 @@ export default function Home() {
           max-width: 900px;
           margin: 0.75rem auto 0;
           color: var(--text-mid);
-          font-size: 0.975rem;
+          font-size: 0.6rem;
+   
         }
 
         /* Fade unten */
