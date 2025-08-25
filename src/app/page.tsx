@@ -62,14 +62,14 @@ export default function Home() {
             aria-label="AI Chatbot placeholder"
           >
             <div className="chatProfile">
-              <Image
-                src="/Profil6.png" // Datei in /public/Profil6.png
-                alt="Lennart Avatar"
-                width={56}
-                height={56}
-                className="chatAvatar"
-                priority
-              />
+             <Image
+  src="/Profil6.png"
+  alt="Lennart Avatar"
+  width={56}
+  height={56}
+  className="chatAvatar"
+/>
+
               <div className="chatMeta">
                 <p className="chatName">Lennart Niehausmeier</p>
                 <p className="chatTitle">
@@ -401,10 +401,13 @@ export default function Home() {
           border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
         .chatAvatar {
-          border-radius: 50%;
-          object-fit: cover;
-          border: 2px solid rgba(255, 255, 255, 0.2);
-        }
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  width: 56px;
+  height: 56px;
+}
+
         .chatMeta {
           display: flex;
           flex-direction: column;
