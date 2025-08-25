@@ -1,3 +1,5 @@
+"use client";
+
 // app/page.tsx - Next.js (app router) TypeScript page for Vercel
 // Assumes Next.js 13+ with the /app directory enabled.
 // Fonts: Inter for base, Playfair Display (italic) for the name.
