@@ -401,12 +401,13 @@ export default function Home() {
           border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
         .chatAvatar {
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  width: 56px;
+  width: 56px;             /* gleiche Größe wie im <Image> */
   height: 56px;
+  border-radius: 50%;       /* rund machen */
+  object-fit: cover;        /* Bild sauber zuschneiden */
+  border: 2px solid rgba(255,255,255,0.2);
 }
+
 
         .chatMeta {
           display: flex;
