@@ -269,7 +269,7 @@ export default function Home() {
        
           <a href="#datenschutz">Data Privacy</a>
         </nav>
-        <p className="footNote">© {new Date().getFullYear()} Lennart</p>
+        
       </footer>
 
       <style jsx>{`
@@ -783,8 +783,8 @@ export default function Home() {
 
         /* ===== Footer ===== */
         .footer {
-          background: #0f0f0f;
-          color: #cfcfcf;
+          background: #f3f3f3;
+          color: #000000;
           padding: 2rem 1.25rem;
           border-top: 1px solid rgba(255, 255, 255, 0.08);
         }
