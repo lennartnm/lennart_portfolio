@@ -22,115 +22,76 @@ export async function POST(req: NextRequest) {
 
     if (!apiKey) return json({ error: "Missing OPENAI_API_KEY" }, 500);
 
-    // ✅ Responses API erwartet "input_text" als type
-    const input = [
-      {
-        role: "system",
-        content: [{ type: "input_text", text: "You are Lennart's AI clone. Antworte präzise, freundlich und fachkundig zu Digital/Growth Marketing, Demand Gen, SEO/SEM, Paid, Partnerships und Marketing Automation." }],
-      },
-      ...messages.map((m) => ({
-        role: m.role,
-        content: [{ type: "input_text", text: m.content }],
-      })),
-    ];
+    // ---- Gespräch als Plain-Text aufbereiten (statt input_text Blöcken) ----
+    const system =
+      "You are Lennart's AI clone. Antworte präzise, freundlich und fachkundig zu Digital/Growth Marketing, Demand Gen, SEO/SEM, Paid, Partnerships und Marketing Automation.";
+    const history = (messages || [])
+      .slice(-15)
+      .map((m) => `${m.role === "user" ? "User" : "Assistant"}: ${m.content}`)
+      .join("\n\n");
 
-    // 1. Versuch: mit File Search (falls Vector Store gesetzt)
-    const withFS = buildRequestBody({ model, input, vectorStoreId });
-    let data = await callOpenAI(apiKey, withFS);
+    const input = `${system}\n\n${history}\n\nAssistant:`;
 
-    // Fallback ohne File Search, wenn 400 auf Tool/Vector Store hindeutet
-    if (data.__error && data.__status === 400 && looksLikeFileSearchIssue(data)) {
-      const noFS = buildRequestBody({ model, input, vectorStoreId: undefined });
-      data = await callOpenAI(apiKey, noFS);
+    // Request-Body für Responses API
+    const body: any = { model, input };
+
+    // Optional: File Search / Vector Store einbinden
+    if (vectorStoreId) {
+      body.tools = [{ type: "file_search" }];
+      body.tool_resources = {
+        file_search: { vector_store_ids: [vectorStoreId] },
+      };
     }
 
-    if (data.__error) {
+    const resp = await fetch("https://api.openai.com/v1/responses", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!resp.ok) {
+      // Fehler lesbar machen
+      let err: any;
+      try {
+        err = await resp.json();
+      } catch {
+        err = await resp.text();
+      }
+      const message =
+        typeof err === "string"
+          ? err
+          : err?.error?.message ?? err?.message ?? JSON.stringify(err, null, 2);
+
       return json(
         {
-          error: `OpenAI error (${data.__status})`,
-          message: data.__message,
-          details: data.__raw,
+          error: `OpenAI error (${resp.status})`,
+          message,
+          details: typeof err === "string" ? err : err, // ggf. in Prod entfernen
         },
-        data.__status
+        resp.status
       );
     }
 
+    const data = await resp.json();
     const text = extractTextFromResponses(data);
-    return json({ text });
+
+    return json({ text: text || "(leer)" });
   } catch (e: any) {
     return json({ error: e?.message || String(e) }, 500);
   }
 }
 
-function buildRequestBody({
-  model,
-  input,
-  vectorStoreId,
-}: {
-  model: string;
-  input: any;
-  vectorStoreId?: string;
-}) {
-  const body: any = { model, input };
-  // Keine veralteten Felder wie response_format / modalities / text.format
-  if (vectorStoreId) {
-    body.tools = [{ type: "file_search" }];
-    body.tool_resources = { file_search: { vector_store_ids: [vectorStoreId] } };
-  }
-  return body;
-}
-
-async function callOpenAI(apiKey: string, body: any) {
-  const resp = await fetch("https://api.openai.com/v1/responses", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
-
-  if (!resp.ok) {
-    let err: any;
-    try {
-      err = await resp.json();
-    } catch {
-      err = await resp.text();
-    }
-
-    const message =
-      typeof err === "string"
-        ? err
-        : err?.error?.message ?? err?.message ?? JSON.stringify(err);
-
-    return { __error: true, __status: resp.status, __message: message, __raw: err };
-  }
-
-  try {
-    const data = await resp.json();
-    return data;
-  } catch (e: any) {
-    return { __error: true, __status: 500, __message: e?.message || String(e), __raw: e };
-  }
-}
-
-function looksLikeFileSearchIssue(errObj: any) {
-  const s = JSON.stringify(errObj.__raw || "").toLowerCase();
-  return (
-    s.includes("file_search") ||
-    s.includes("vector_store") ||
-    s.includes("tool") ||
-    s.includes("attachments") ||
-    s.includes("not allowed") ||
-    s.includes("not found")
-  );
-}
-
-// Zieht Text robust aus verschiedenen Responses-Formaten
+// Zieht Text robust aus Responses-Ausgaben
 function extractTextFromResponses(data: any): string {
+  // Bequemer Shortcut, falls vorhanden
   if (typeof data?.output_text === "string" && data.output_text.trim()) {
     return data.output_text.trim();
   }
+
+  // Generischer Fallback über data.output[].content[]
   const out = data?.output;
   if (Array.isArray(out)) {
     const buf: string[] = [];
@@ -138,8 +99,10 @@ function extractTextFromResponses(data: any): string {
       const content = item?.content;
       if (!Array.isArray(content)) continue;
       for (const c of content) {
+        // Häufige Formate der Responses-API:
+        // { type: "output_text", text: "..." }
+        // { type: "text", text: "..." }   (manchmal)
         if (typeof c?.text === "string") buf.push(c.text);
-        else if (c?.type === "output_text" && typeof c?.text === "string") buf.push(c.text);
         else if (typeof c?.text?.value === "string") buf.push(c.text.value);
       }
     }
