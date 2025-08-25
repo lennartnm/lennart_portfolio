@@ -3,6 +3,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Inter, Playfair_Display } from "next/font/google";
+import { FaChartLine, FaBullhorn, FaCogs, FaSearch } from "react-icons/fa";
+
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const playfair = Playfair_Display({
@@ -202,55 +204,56 @@ export default function Home() {
         <div className="fadeBottom" aria-hidden />
       </section>
 
-      {/* ===== Section 2: Skillset (Intro links + 4 Cards) ===== */}
-      <section className="skills">
-        <div className="skillsInner">
-          {/* Intro links */}
-          <aside className="skillsIntro">
-            <h2 className="skillsTitle">Skillset</h2>
-            <p className="skillsLead">
-              With skills in over 4 different fields of growth & marketing,
-              I’m a strong partner when it comes to shipping full-funnel projects.
-              Whatever your needs are, I can jump in and take on the challenge.
-            </p>
-          </aside>
+   {/* ===== Section 2: Skillset (Intro links + 4 Cards) ===== */}
+<section className="skills">
+  <div className="skillsInner">
+    {/* Intro links */}
+    <aside className="skillsIntro">
+      <h2 className="skillsTitle">Skillset</h2>
+      <p className="skillsLead">
+        With skills in over 4 different fields of growth & marketing,
+        I’m a strong partner when it comes to shipping full-funnel projects.
+        Whatever your needs are, I can jump in and take on the challenge.
+      </p>
+    </aside>
 
-          {/* 4 Cards rechts */}
-          <div className="skillsGrid">
-            <article className="skillCard">
-              <div className="skillIcon" aria-hidden>📈</div>
-              <h3 className="skillName">Growth / Demand Gen</h3>
-              <p className="skillText">
-                Full-funnel Programme, ABM-Piloten, stetige Pipeline-Hebel.
-              </p>
-            </article>
+    {/* 4 Cards rechts */}
+    <div className="skillsGrid">
+      <article className="skillCard">
+        <div className="skillIcon"><FaBullhorn /></div>
+        <h3 className="skillName">Growth / Demand Gen</h3>
+        <p className="skillText">
+          Full-funnel Programme, ABM-Piloten, stetige Pipeline-Hebel.
+        </p>
+      </article>
 
-            <article className="skillCard">
-              <div className="skillIcon" aria-hidden>💳</div>
-              <h3 className="skillName">Performance Marketing</h3>
-              <p className="skillText">
-                Paid Search & Paid Social skalieren, ROAS steigern, Tests priorisieren.
-              </p>
-            </article>
+      <article className="skillCard">
+        <div className="skillIcon"><FaChartLine /></div>
+        <h3 className="skillName">Performance Marketing</h3>
+        <p className="skillText">
+          Paid Search & Paid Social skalieren, ROAS steigern, Tests priorisieren.
+        </p>
+      </article>
 
-            <article className="skillCard">
-              <div className="skillIcon" aria-hidden>🤖</div>
-              <h3 className="skillName">Automation & Tracking</h3>
-              <p className="skillText">
-                Journeys, Lead-Scoring, Attribution & sauberes Measurement.
-              </p>
-            </article>
+      <article className="skillCard">
+        <div className="skillIcon"><FaCogs /></div>
+        <h3 className="skillName">Automation & Tracking</h3>
+        <p className="skillText">
+          Journeys, Lead-Scoring, Attribution & sauberes Measurement.
+        </p>
+      </article>
 
-            <article className="skillCard">
-              <div className="skillIcon" aria-hidden>🔎</div>
-              <h3 className="skillName">SEO / Content</h3>
-              <p className="skillText">
-                Technische Basis, Intent-Content, AI-gestützte Workflows.
-              </p>
-            </article>
-          </div>
-        </div>
-      </section>
+      <article className="skillCard">
+        <div className="skillIcon"><FaSearch /></div>
+        <h3 className="skillName">SEO / Content</h3>
+        <p className="skillText">
+          Technische Basis, Intent-Content, AI-gestützte Workflows.
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
+
 
       {/* ===== Section 2b: Roadmap ===== */}
       <section className="roadmap">
