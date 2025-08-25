@@ -22,29 +22,23 @@ export async function POST(req: NextRequest) {
 
     if (!apiKey) return json({ error: "Missing OPENAI_API_KEY" }, 500);
 
-    // Responses API input
+    // ✅ Responses API erwartet "input_text" als type
     const input = [
       {
         role: "system",
-        content: [
-          {
-            type: "text",
-            text:
-              "You are Lennart's AI clone. Antworte präzise, freundlich und fachkundig zu Digital/Growth Marketing, Demand Gen, SEO/SEM, Paid, Partnerships und Marketing Automation.",
-          },
-        ],
+        content: [{ type: "input_text", text: "You are Lennart's AI clone. Antworte präzise, freundlich und fachkundig zu Digital/Growth Marketing, Demand Gen, SEO/SEM, Paid, Partnerships und Marketing Automation." }],
       },
       ...messages.map((m) => ({
         role: m.role,
-        content: [{ type: "text", text: m.content }],
+        content: [{ type: "input_text", text: m.content }],
       })),
     ];
 
-    // --- 1. Versuch: mit File Search (falls Vector Store gesetzt) ---
+    // 1. Versuch: mit File Search (falls Vector Store gesetzt)
     const withFS = buildRequestBody({ model, input, vectorStoreId });
     let data = await callOpenAI(apiKey, withFS);
 
-    // --- Fallback: ohne File Search, wenn 400 wegen Tool/Vector Store ---
+    // Fallback ohne File Search, wenn 400 auf Tool/Vector Store hindeutet
     if (data.__error && data.__status === 400 && looksLikeFileSearchIssue(data)) {
       const noFS = buildRequestBody({ model, input, vectorStoreId: undefined });
       data = await callOpenAI(apiKey, noFS);
@@ -77,18 +71,12 @@ function buildRequestBody({
   input: any;
   vectorStoreId?: string;
 }) {
-  const body: any = {
-    model,
-    input,
-    // Neu (gültig): Ausgabemodus über text.format steuern
-    text: { format: "plain" }, // oder "markdown"
-  };
-
+  const body: any = { model, input };
+  // Keine veralteten Felder wie response_format / modalities / text.format
   if (vectorStoreId) {
     body.tools = [{ type: "file_search" }];
     body.tool_resources = { file_search: { vector_store_ids: [vectorStoreId] } };
   }
-
   return body;
 }
 
@@ -138,7 +126,7 @@ function looksLikeFileSearchIssue(errObj: any) {
   );
 }
 
-// Text robust extrahieren
+// Zieht Text robust aus verschiedenen Responses-Formaten
 function extractTextFromResponses(data: any): string {
   if (typeof data?.output_text === "string" && data.output_text.trim()) {
     return data.output_text.trim();
@@ -151,7 +139,6 @@ function extractTextFromResponses(data: any): string {
       if (!Array.isArray(content)) continue;
       for (const c of content) {
         if (typeof c?.text === "string") buf.push(c.text);
-        else if (c?.type === "text" && typeof c?.text === "string") buf.push(c.text);
         else if (c?.type === "output_text" && typeof c?.text === "string") buf.push(c.text);
         else if (typeof c?.text?.value === "string") buf.push(c.text.value);
       }
