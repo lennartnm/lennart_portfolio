@@ -791,7 +791,7 @@ export default function Home() {
 
               /* ===== Prompt Ideas Carousel ===== */
         .prompts {
-          background: #0b0b0b;
+          background: #000000;
           color: #ffffff;
           padding: 3rem 1.25rem 4rem;
         }
