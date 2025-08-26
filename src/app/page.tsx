@@ -836,23 +836,24 @@ export default function Home() {
         .carousel::-webkit-scrollbar {
           display: none;
         }
-        .promptCard {
-          flex: 0 0 calc(25% - 0.75rem);
-          min-width: 240px;
-          background: linear-gradient(
-            145deg,
-            rgba(255, 255, 255, 0.1),
-            rgba(255, 255, 255, 0.05)
-          );
-          backdrop-filter: blur(10px);
-          border-radius: 14px;
-          padding: 1.25rem;
-          color: #ffffff;
-          font-size: 0.98rem;
-          line-height: 1.45;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-          transition: transform 0.15s ease, box-shadow 0.15s ease;
-        }
+      .promptCard {
+  flex: 0 0 calc(25% - 0.75rem);
+  min-width: 240px;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.24),
+    rgba(255, 255, 255, 0.12)
+  );
+  backdrop-filter: blur(10px);
+  border-radius: 14px;
+  padding: 1.25rem;
+  color: #ffffff;
+  font-size: 0.98rem;
+  line-height: 1.45;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
         .promptCard:hover,
         .promptCard:focus {
           transform: translateY(-3px);
