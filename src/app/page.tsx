@@ -210,9 +210,9 @@ export default function Home() {
       {/* ===== Section 4: Footer ===== */}
       <footer className="footer">
         <nav className="footerNav">
-          <a href="#imprint">Legal Notice</a>
+          <a href="/imprint">Legal Notice</a>
        
-          <a href="#privacy">Data Privacy</a>
+          <a href="/privacy">Data Privacy</a>
         </nav>
         
       </footer>
