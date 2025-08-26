@@ -236,34 +236,41 @@ export default function Home() {
         <div className="fadeBottom" aria-hidden />
       </section>
 
-      {/* ===== Section 3.5: Prompt Ideas Carousel ===== */}
+         {/* ===== Section 3.5: Prompt Ideas Carousel ===== */}
       <section className="prompts" aria-label="Prompt ideas for the chat">
         <div className="promptsInner">
-          <button
-            className="arrow left"
-            aria-label="Scroll prompt cards left"
-            onClick={() => scrollPrompts(-1)}
-            type="button"
-          >
-            ‹
-          </button>
-          <div className="carousel" ref={carouselRef}>
-            {PROMPT_QUESTIONS.concat(PROMPT_QUESTIONS).map((q, i) => (
-              <div className="promptCard" key={`prompt-${i}`} role="button" tabIndex={0}>
-                {q}
-              </div>
-            ))}
+          <div className="promptsHeader">
+            <h2 className="promptsTitle">Some ideas to ask me …</h2>
+            <div className="promptsUnderline" />
           </div>
-          <button
-            className="arrow right"
-            aria-label="Scroll prompt cards right"
-            onClick={() => scrollPrompts(1)}
-            type="button"
-          >
-            ›
-          </button>
+          <div className="promptsContent">
+            <button
+              className="arrow left"
+              aria-label="Scroll prompt cards left"
+              onClick={() => scrollPrompts(-1)}
+              type="button"
+            >
+              ‹
+            </button>
+            <div className="carousel" ref={carouselRef}>
+              {PROMPT_QUESTIONS.concat(PROMPT_QUESTIONS).map((q, i) => (
+                <div className="promptCard" key={`prompt-${i}`} role="button" tabIndex={0}>
+                  {q}
+                </div>
+              ))}
+            </div>
+            <button
+              className="arrow right"
+              aria-label="Scroll prompt cards right"
+              onClick={() => scrollPrompts(1)}
+              type="button"
+            >
+              ›
+            </button>
+          </div>
         </div>
       </section>
+
 
       {/* ===== Section 4: Footer ===== */}
       <footer className="footer">
@@ -782,18 +789,36 @@ export default function Home() {
           font-size: 1.125rem;
         }
 
-        /* ===== Prompt Ideas Carousel ===== */
+              /* ===== Prompt Ideas Carousel ===== */
         .prompts {
-          background: #0b0b0b; /* dark background to separate section */
+          background: #0b0b0b;
           color: #ffffff;
-          padding: 3rem 1.25rem;
-          border-top: 1px solid rgba(255, 255, 255, 0.06);
-          border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+          padding: 3rem 1.25rem 4rem;
         }
         .promptsInner {
-          position: relative;
           max-width: 1120px;
           margin: 0 auto;
+          display: flex;
+          flex-direction: column;
+          gap: 2rem;
+        }
+        .promptsHeader {
+          text-align: center;
+        }
+        .promptsTitle {
+          font-size: clamp(1.5rem, 2.8vw, 1.9rem);
+          font-weight: 700;
+          margin: 0 0 0.5rem;
+        }
+        .promptsUnderline {
+          height: 3px;
+          width: 100%;
+          background: #ffffff;
+          opacity: 0.2;
+          border-radius: 2px;
+        }
+
+        .promptsContent {
           display: flex;
           align-items: center;
           gap: 0.5rem;
@@ -803,36 +828,40 @@ export default function Home() {
           overflow-x: auto;
           scroll-behavior: smooth;
           gap: 1rem;
-          scrollbar-width: none; /* Firefox */
-          -ms-overflow-style: none; /* IE/Edge */
+          scrollbar-width: none;
+          -ms-overflow-style: none;
           flex: 1;
           padding: 0.25rem;
         }
         .carousel::-webkit-scrollbar {
-          display: none; /* Chrome/Safari */
+          display: none;
         }
         .promptCard {
-          flex: 0 0 calc(25% - 0.75rem); /* 4 visible on desktop */
+          flex: 0 0 calc(25% - 0.75rem);
           min-width: 240px;
-          background: #2b2b2b; /* dark grey box */
-          border: 1px solid #3a3a3a;
-          border-radius: 12px;
-          padding: 1.1rem;
-          color: #ffffff; /* white font */
+          background: linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.1),
+            rgba(255, 255, 255, 0.05)
+          );
+          backdrop-filter: blur(10px);
+          border-radius: 14px;
+          padding: 1.25rem;
+          color: #ffffff;
           font-size: 0.98rem;
           line-height: 1.45;
-          user-select: none;
-          transition: transform 0.15s ease, border-color 0.15s ease;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+          transition: transform 0.15s ease, box-shadow 0.15s ease;
         }
         .promptCard:hover,
         .promptCard:focus {
-          transform: translateY(-2px);
-          border-color: #5a5a5a;
+          transform: translateY(-3px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
           outline: none;
         }
         .arrow {
           background: rgba(255, 255, 255, 0.1);
-          border: 1px solid rgba(255, 255, 255, 0.2);
+          border: none;
           color: #fff;
           font-size: 1.6rem;
           width: 44px;
@@ -854,29 +883,22 @@ export default function Home() {
 
         @media (max-width: 1024px) {
           .promptCard {
-            flex: 0 0 calc(33.333% - 0.75rem); /* 3 visible on tablets */
+            flex: 0 0 calc(33.333% - 0.75rem);
           }
         }
         @media (max-width: 720px) {
-          .promptsInner {
-            gap: 0.25rem;
-          }
-          .arrow {
-            width: 40px;
-            height: 40px;
-            font-size: 1.4rem;
-          }
           .promptCard {
-            flex: 0 0 calc(50% - 0.75rem); /* 2 visible on phones */
-            min-width: 220px;
+            flex: 0 0 calc(50% - 0.75rem);
+            min-width: 200px;
           }
         }
         @media (max-width: 480px) {
           .promptCard {
-            flex: 0 0 90%; /* single card emphasis on small phones (swipe) */
-            min-width: 260px;
+            flex: 0 0 90%;
+            min-width: 240px;
           }
         }
+
 
         /* ===== Footer ===== */
         .footer {
