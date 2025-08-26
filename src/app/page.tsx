@@ -11,25 +11,6 @@ const playfair = Playfair_Display({
   variable: "--font-playfair",
 });
 
-  const carouselRef = useRef<HTMLDivElement | null>(null);
-
-  function scrollPrompts(dir: number) {
-    const el = carouselRef.current;
-    if (!el) return;
-    const cardWidth = el.firstElementChild
-      ? (el.firstElementChild as HTMLElement).offsetWidth + 16
-      : 300;
-    el.scrollBy({ left: dir * cardWidth, behavior: "smooth" });
-
-    // loop effect
-    if (dir === 1 && el.scrollLeft + el.clientWidth >= el.scrollWidth - 5) {
-      el.scrollTo({ left: 0, behavior: "smooth" });
-    } else if (dir === -1 && el.scrollLeft <= 0) {
-      el.scrollTo({ left: el.scrollWidth, behavior: "smooth" });
-    }
-  }
-
-
 type Msg = { role: "user" | "assistant"; content: string };
 
 const KEYWORDS = [
@@ -125,6 +106,40 @@ export default function Home() {
     }
   }
 
+  // ===== Prompt Ideas Carousel logic =====
+  const carouselRef = useRef<HTMLDivElement | null>(null);
+  const PROMPT_QUESTIONS = [
+    "Can you walk me through your professional journey so far?",
+    "What made you start your own e-commerce business at such a young age?",
+    "Why did you decide to stop running your e-commerce brands?",
+    "What exactly did you do at PUMA in your role as a Global Digital Marketing team member?",
+    "What kind of clients and projects are you currently handling as a Digital Marketing Consultant?",
+    "What platforms and tools are you most experienced with?",
+    "Can you give an example of a campaign you’ve scaled successfully?",
+    "What are your strengths as a digital marketing generalist?",
+    "What makes your profile unique compared to other candidates?",
+    "Why do you want to relocate to Amsterdam?",
+    "Are you open to transitioning from freelance consulting to a permanent role again?",
+  ];
+
+  function scrollPrompts(dir: number) {
+    const el = carouselRef.current;
+    if (!el) return;
+    const first = el.firstElementChild as HTMLElement | null;
+    const gap = 16; // matches .carousel gap
+    const cardWidth = first ? first.offsetWidth + gap : 300;
+    el.scrollBy({ left: dir * cardWidth, behavior: "smooth" });
+
+    // Loop illusion: when reaching edges, jump to the other side
+    const atRightEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 5;
+    const atLeftEnd = el.scrollLeft <= 5;
+    if (dir === 1 && atRightEnd) {
+      el.scrollTo({ left: 0, behavior: "smooth" });
+    } else if (dir === -1 && atLeftEnd) {
+      el.scrollTo({ left: el.scrollWidth, behavior: "smooth" });
+    }
+  }
+
   return (
     <main className={`${inter.variable} ${playfair.variable}`}>
       {/* ===== Section 1: Hero ===== */}
@@ -211,7 +226,8 @@ export default function Home() {
           {/* Text unter Chat */}
           <div className="belowChat">
             <p>
-          Worth to talk in person? Feel free to contact me for a first chat via <u>lennart.niehausmeier@web.de</u>
+              Worth to talk in person? Feel free to contact me for a first chat via{" "}
+              <u>lennart.niehausmeier@web.de</u>
             </p>
           </div>
         </div>
@@ -220,50 +236,41 @@ export default function Home() {
         <div className="fadeBottom" aria-hidden />
       </section>
 
-   
-  {/* ===== Section 3.5: Prompt Ideas Carousel ===== */}
-      <section className="prompts">
+      {/* ===== Section 3.5: Prompt Ideas Carousel ===== */}
+      <section className="prompts" aria-label="Prompt ideas for the chat">
         <div className="promptsInner">
-          <button className="arrow left" onClick={() => scrollPrompts(-1)}>
+          <button
+            className="arrow left"
+            aria-label="Scroll prompt cards left"
+            onClick={() => scrollPrompts(-1)}
+            type="button"
+          >
             ‹
           </button>
           <div className="carousel" ref={carouselRef}>
-            {[
-              "Can you walk me through your professional journey so far?",
-              "What made you start your own e-commerce business at such a young age?",
-              "Why did you decide to stop running your e-commerce brands?",
-              "What exactly did you do at PUMA in your role as a Global Digital Marketing team member?",
-              "What kind of clients and projects are you currently handling as a Digital Marketing Consultant?",
-              "What platforms and tools are you most experienced with?",
-              "Can you give an example of a campaign you’ve scaled successfully?",
-              "What are your strengths as a digital marketing generalist?",
-              "What makes your profile unique compared to other candidates?",
-              "Why do you want to relocate to Amsterdam?",
-              "Are you open to transitioning from freelance consulting to a permanent role again?",
-            ].map((q, i) => (
-              <div className="promptCard" key={i}>
+            {PROMPT_QUESTIONS.concat(PROMPT_QUESTIONS).map((q, i) => (
+              <div className="promptCard" key={`prompt-${i}`} role="button" tabIndex={0}>
                 {q}
               </div>
             ))}
           </div>
-          <button className="arrow right" onClick={() => scrollPrompts(1)}>
+          <button
+            className="arrow right"
+            aria-label="Scroll prompt cards right"
+            onClick={() => scrollPrompts(1)}
+            type="button"
+          >
             ›
           </button>
         </div>
       </section>
 
-    
-
-     
-
       {/* ===== Section 4: Footer ===== */}
       <footer className="footer">
         <nav className="footerNav">
           <a href="/imprint">Legal Notice</a>
-       
           <a href="/privacy">Data Privacy</a>
         </nav>
-        
       </footer>
 
       <style jsx>{`
@@ -454,60 +461,6 @@ export default function Home() {
           height: 100%;
           pointer-events: none;
         }
-                /* ===== Prompt Ideas Carousel ===== */
-        .prompts {
-          background: #111;
-          color: #fff;
-          padding: 3rem 1.25rem;
-        }
-        .promptsInner {
-          position: relative;
-          max-width: 1120px;
-          margin: 0 auto;
-          display: flex;
-          align-items: center;
-        }
-        .carousel {
-          display: flex;
-          overflow-x: auto;
-          scroll-behavior: smooth;
-          gap: 1rem;
-          scrollbar-width: none;
-          flex: 1;
-        }
-        .carousel::-webkit-scrollbar {
-          display: none;
-        }
-        .promptCard {
-          flex: 0 0 calc(25% - 1rem); /* 4 visible on desktop */
-          min-width: 240px;
-          background: #2a2a2a;
-          padding: 1.25rem;
-          border-radius: 12px;
-          color: #fff;
-          font-size: 0.95rem;
-          line-height: 1.45;
-        }
-        .arrow {
-          background: rgba(255,255,255,0.1);
-          border: none;
-          color: #fff;
-          font-size: 2rem;
-          width: 44px;
-          height: 44px;
-          border-radius: 50%;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin: 0 0.5rem;
-          flex-shrink: 0;
-          transition: background 0.2s;
-        }
-        .arrow:hover {
-          background: rgba(255,255,255,0.25);
-        }
-
         .fadeLeft {
           left: 0;
           background: linear-gradient(90deg, #000 0%, transparent 100%);
@@ -649,7 +602,6 @@ export default function Home() {
           margin: 0.75rem auto 0;
           color: var(--text-mid);
           font-size: 0.975rem;
-   
         }
 
         /* Fade unten */
@@ -828,6 +780,102 @@ export default function Home() {
           color: var(--text-mid);
           margin: 0;
           font-size: 1.125rem;
+        }
+
+        /* ===== Prompt Ideas Carousel ===== */
+        .prompts {
+          background: #0b0b0b; /* dark background to separate section */
+          color: #ffffff;
+          padding: 3rem 1.25rem;
+          border-top: 1px solid rgba(255, 255, 255, 0.06);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .promptsInner {
+          position: relative;
+          max-width: 1120px;
+          margin: 0 auto;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+        .carousel {
+          display: flex;
+          overflow-x: auto;
+          scroll-behavior: smooth;
+          gap: 1rem;
+          scrollbar-width: none; /* Firefox */
+          -ms-overflow-style: none; /* IE/Edge */
+          flex: 1;
+          padding: 0.25rem;
+        }
+        .carousel::-webkit-scrollbar {
+          display: none; /* Chrome/Safari */
+        }
+        .promptCard {
+          flex: 0 0 calc(25% - 0.75rem); /* 4 visible on desktop */
+          min-width: 240px;
+          background: #2b2b2b; /* dark grey box */
+          border: 1px solid #3a3a3a;
+          border-radius: 12px;
+          padding: 1.1rem;
+          color: #ffffff; /* white font */
+          font-size: 0.98rem;
+          line-height: 1.45;
+          user-select: none;
+          transition: transform 0.15s ease, border-color 0.15s ease;
+        }
+        .promptCard:hover,
+        .promptCard:focus {
+          transform: translateY(-2px);
+          border-color: #5a5a5a;
+          outline: none;
+        }
+        .arrow {
+          background: rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          color: #fff;
+          font-size: 1.6rem;
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+          transition: background 0.2s, transform 0.1s;
+        }
+        .arrow:hover {
+          background: rgba(255, 255, 255, 0.22);
+        }
+        .arrow:active {
+          transform: scale(0.96);
+        }
+
+        @media (max-width: 1024px) {
+          .promptCard {
+            flex: 0 0 calc(33.333% - 0.75rem); /* 3 visible on tablets */
+          }
+        }
+        @media (max-width: 720px) {
+          .promptsInner {
+            gap: 0.25rem;
+          }
+          .arrow {
+            width: 40px;
+            height: 40px;
+            font-size: 1.4rem;
+          }
+          .promptCard {
+            flex: 0 0 calc(50% - 0.75rem); /* 2 visible on phones */
+            min-width: 220px;
+          }
+        }
+        @media (max-width: 480px) {
+          .promptCard {
+            flex: 0 0 90%; /* single card emphasis on small phones (swipe) */
+            min-width: 260px;
+          }
         }
 
         /* ===== Footer ===== */
