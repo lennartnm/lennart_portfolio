@@ -212,7 +212,7 @@ export default function Home() {
         <nav className="footerNav">
           <a href="#imprint">Legal Notice</a>
        
-          <a href="#datenschutz">Data Privacy</a>
+          <a href="#privacy">Data Privacy</a>
         </nav>
         
       </footer>
