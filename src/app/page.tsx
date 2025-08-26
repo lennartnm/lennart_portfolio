@@ -106,63 +106,7 @@ export default function Home() {
     }
   }
 
-  const carouselRef = useRef<HTMLDivElement | null>(null);
-const isTouchingRef = useRef(false);
-const snapTimeoutRef = useRef<number | null>(null);
-
-function scrollPrompts(dir: number) {
-  const el = carouselRef.current;
-  if (!el) return;
-  const first = el.firstElementChild as HTMLElement | null;
-  const gap = parseFloat(getComputedStyle(el).columnGap || "16") || 16;
-  const cardWidth = first ? first.offsetWidth + gap : 300;
-  el.scrollBy({ left: dir * cardWidth, behavior: "smooth" });
-
-  // loop illusion
-  const atRightEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 5;
-  const atLeftEnd = el.scrollLeft <= 5;
-  if (dir === 1 && atRightEnd) el.scrollTo({ left: 0, behavior: "smooth" });
-  if (dir === -1 && atLeftEnd) el.scrollTo({ left: el.scrollWidth, behavior: "smooth" });
-}
-
-// Auto-snap to nearest card after user scroll stops (mobile-friendly)
-function onUserScroll() {
-  const el = carouselRef.current;
-  if (!el) return;
-  if (snapTimeoutRef.current) window.clearTimeout(snapTimeoutRef.current);
-  snapTimeoutRef.current = window.setTimeout(() => {
-    // If user is still dragging, don't snap
-    if (isTouchingRef.current) return;
-    const first = el.firstElementChild as HTMLElement | null;
-    if (!first) return;
-    const gap = parseFloat(getComputedStyle(el).columnGap || "16") || 16;
-    const cardWidth = first.offsetWidth + gap;
-    const index = Math.round(el.scrollLeft / cardWidth);
-    const target = index * cardWidth;
-    el.scrollTo({ left: target, behavior: "smooth" });
-  }, 90); // short debounce for natural feel
-}
-
-// Track touch state to avoid snapping mid-drag
-useEffect(() => {
-  const el = carouselRef.current;
-  if (!el) return;
-  const onTouchStart = () => (isTouchingRef.current = true);
-  const onTouchEnd = () => {
-    isTouchingRef.current = false;
-    onUserScroll(); // final snap after lift
-  };
-  el.addEventListener("touchstart", onTouchStart, { passive: true });
-  el.addEventListener("touchend", onTouchEnd, { passive: true });
-  return () => {
-    el.removeEventListener("touchstart", onTouchStart);
-    el.removeEventListener("touchend", onTouchEnd);
-  };
-}, []);
-
-
-  // ===== Prompt Ideas Carousel logic =====
-  const carouselRef = useRef<HTMLDivElement | null>(null);
+  // ===== Prompt Ideas (content) =====
   const PROMPT_QUESTIONS = [
     "Can you walk me through your professional journey so far?",
     "What made you start your own e-commerce business at such a young age?",
@@ -177,23 +121,61 @@ useEffect(() => {
     "Are you open to transitioning from freelance consulting to a permanent role again?",
   ];
 
+  // ===== Prompt Ideas (carousel logic, smooth mobile) =====
+  const carouselRef = useRef<HTMLDivElement | null>(null);
+  const isTouchingRef = useRef(false);
+  const snapTimeoutRef = useRef<number | null>(null);
+
   function scrollPrompts(dir: number) {
     const el = carouselRef.current;
     if (!el) return;
     const first = el.firstElementChild as HTMLElement | null;
-    const gap = 16; // matches .carousel gap
+    const gap = parseFloat(getComputedStyle(el).columnGap || "16") || 16;
     const cardWidth = first ? first.offsetWidth + gap : 300;
     el.scrollBy({ left: dir * cardWidth, behavior: "smooth" });
 
-    // Loop illusion: when reaching edges, jump to the other side
+    // loop illusion
     const atRightEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 5;
     const atLeftEnd = el.scrollLeft <= 5;
-    if (dir === 1 && atRightEnd) {
-      el.scrollTo({ left: 0, behavior: "smooth" });
-    } else if (dir === -1 && atLeftEnd) {
+    if (dir === 1 && atRightEnd) el.scrollTo({ left: 0, behavior: "smooth" });
+    if (dir === -1 && atLeftEnd)
       el.scrollTo({ left: el.scrollWidth, behavior: "smooth" });
-    }
   }
+
+  // Auto-snap to nearest card after user scroll stops (mobile-friendly)
+  function onUserScroll() {
+    const el = carouselRef.current;
+    if (!el) return;
+    if (snapTimeoutRef.current) window.clearTimeout(snapTimeoutRef.current);
+    snapTimeoutRef.current = window.setTimeout(() => {
+      if (isTouchingRef.current) return; // don't snap mid-drag
+      const first = el.firstElementChild as HTMLElement | null;
+      if (!first) return;
+      const gap = parseFloat(getComputedStyle(el).columnGap || "16") || 16;
+      const cardWidth = first.offsetWidth + gap;
+      const index = Math.round(el.scrollLeft / cardWidth);
+      const target = index * cardWidth;
+      el.scrollTo({ left: target, behavior: "smooth" });
+    }, 90);
+  }
+
+  // Track touch state to avoid snapping during finger drag, then snap after lift
+  useEffect(() => {
+    const el = carouselRef.current;
+    if (!el) return;
+    const onTouchStart = () => (isTouchingRef.current = true);
+    const onTouchEnd = () => {
+      isTouchingRef.current = false;
+      onUserScroll(); // final snap
+    };
+    el.addEventListener("touchstart", onTouchStart, { passive: true });
+    el.addEventListener("touchend", onTouchEnd, { passive: true });
+    return () => {
+      el.removeEventListener("touchstart", onTouchStart);
+      el.removeEventListener("touchend", onTouchEnd);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <main className={`${inter.variable} ${playfair.variable}`}>
@@ -221,15 +203,12 @@ useEffect(() => {
             Hi, I&apos;m <span className="italicName">Lennart.</span>
           </h1>
           <p className="tagline">
-            Entrepreneurial driven Digital Growth Specialist looking for the next opportunity.
+            Entrepreneurial driven Digital Growth Specialist looking for the next
+            opportunity.
           </p>
 
           {/* Chatbox (funktional) */}
-          <div
-            className="chatPlaceholder"
-            role="region"
-            aria-label="AI Chatbot"
-          >
+          <div className="chatPlaceholder" role="region" aria-label="AI Chatbot">
             <div className="chatProfile">
               <div className="avatarWrap">
                 <Image
@@ -281,8 +260,8 @@ useEffect(() => {
           {/* Text unter Chat */}
           <div className="belowChat">
             <p>
-              Worth to talk in person? Feel free to contact me for a first chat via{" "}
-              <u>lennart.niehausmeier@web.de</u>
+              Worth to talk in person? Feel free to contact me for a first chat
+              via <u>lennart.niehausmeier@web.de</u>
             </p>
           </div>
         </div>
@@ -291,59 +270,58 @@ useEffect(() => {
         <div className="fadeBottom" aria-hidden />
       </section>
 
-     {/* ===== Section 3.5: Prompt Ideas Carousel ===== */}
-<section className="prompts" aria-label="Prompt ideas for the chat">
-  <div className="promptsInner">
-    <div className="promptsHeader">
-      <h2 className="promptsTitle">Some ideas to ask me …</h2>
-      <div className="promptsUnderline" />
-    </div>
+      {/* ===== Section 3.5: Prompt Ideas Carousel ===== */}
+      <section className="prompts" aria-label="Prompt ideas for the chat">
+        <div className="promptsInner">
+          <div className="promptsHeader">
+            <h2 className="promptsTitle">Some ideas to ask me …</h2>
+            <div className="promptsUnderline" />
+          </div>
 
-    <div className="promptsContent">
-      <button
-        className="arrow left"
-        aria-label="Scroll prompt cards left"
-        onClick={() => scrollPrompts(-1)}
-        type="button"
-      >
-        ‹
-      </button>
-
-      <div className="carouselWrap">
-        <div className="edgeFade left" aria-hidden />
-        <div className="carousel" ref={carouselRef} onScroll={onUserScroll}>
-          {PROMPT_QUESTIONS.concat(PROMPT_QUESTIONS).map((q, i) => (
-            <div
-              className="promptCard"
-              key={`prompt-${i}`}
-              role="button"
-              tabIndex={0}
+          <div className="promptsContent">
+            <button
+              className="arrow left"
+              aria-label="Scroll prompt cards left"
+              onClick={() => scrollPrompts(-1)}
+              type="button"
             >
-              {q}
+              ‹
+            </button>
+
+            <div className="carouselWrap">
+              <div className="edgeFade left" aria-hidden />
+              <div className="carousel" ref={carouselRef} onScroll={onUserScroll}>
+                {PROMPT_QUESTIONS.concat(PROMPT_QUESTIONS).map((q, i) => (
+                  <div
+                    className="promptCard"
+                    key={`prompt-${i}`}
+                    role="button"
+                    tabIndex={0}
+                  >
+                    {q}
+                  </div>
+                ))}
+              </div>
+              <div className="edgeFade right" aria-hidden />
             </div>
-          ))}
+
+            <button
+              className="arrow right"
+              aria-label="Scroll prompt cards right"
+              onClick={() => scrollPrompts(1)}
+              type="button"
+            >
+              ›
+            </button>
+          </div>
         </div>
-        <div className="edgeFade right" aria-hidden />
-      </div>
-
-      <button
-        className="arrow right"
-        aria-label="Scroll prompt cards right"
-        onClick={() => scrollPrompts(1)}
-        type="button"
-      >
-        ›
-      </button>
-    </div>
-  </div>
-</section>
-
-
+      </section>
 
       {/* ===== Section 4: Footer ===== */}
       <footer className="footer">
         <nav className="footerNav">
           <a href="/imprint">Legal Notice</a>
+
           <a href="/privacy">Data Privacy</a>
         </nav>
       </footer>
@@ -693,276 +671,135 @@ useEffect(() => {
           );
         }
 
-        /* ===== Skillset ===== */
-        .skills {
-          background: var(--bg-white);
-          color: var(--text-dark);
-          padding: 6rem 1.25rem 4rem;
+        /* ===== Prompt Ideas (mobile-smooth) ===== */
+        .prompts {
+          background: #0b0b0b; /* no border */
+          color: #ffffff;
+          padding: 3rem 1.25rem 4rem;
         }
-        .skillsInner {
+        .promptsInner {
           max-width: 1120px;
           margin: 0 auto;
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: 2rem;
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
         }
-        .skillsIntro {
-          max-width: 640px;
-        }
-        .skillsTitle {
-          font-size: clamp(1.9rem, 3.2vw, 2.5rem);
-          font-weight: 800;
-          margin: 0 0 0.75rem 0;
-        }
-        .skillsLead {
-          margin: 0;
-          color: #444;
-          line-height: 1.6;
-          font-size: clamp(1rem, 1.6vw, 1.05rem);
-        }
-        .skillsGrid {
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: 1rem;
-        }
-        .skillCard {
-          background: #fff;
-          border: 1px solid #e6e6e6;
-          border-radius: 14px;
-          padding: 1.25rem;
-          box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-        }
-        .skillIcon {
-          font-size: 24px;
-          line-height: 1;
-          margin-bottom: 0.5rem;
-        }
-        .skillName {
-          margin: 0 0 0.4rem 0;
-          font-size: 1.15rem;
-          font-weight: 800;
-        }
-        .skillText {
-          margin: 0;
-          color: #555;
-          line-height: 1.55;
-        }
-        @media (min-width: 960px) {
-          .skillsInner {
-            grid-template-columns: 0.9fr 1.1fr; /* Intro : Grid */
-            align-items: start;
-            gap: 3rem;
-          }
-          .skillsGrid {
-            grid-template-columns: repeat(2, minmax(0,1fr));
-            gap: 1.25rem 1rem;
-          }
-        }
-
-        /* ===== Roadmap ===== */
-        .roadmap {
-          background: var(--bg-white);
-          color: var(--text-dark);
-          padding: 2rem 1.25rem 6rem;
-        }
-        .roadmapInner {
-          max-width: 1120px;
-          margin: 0 auto;
-        }
-        .roadmapTitle {
+        .promptsHeader {
           text-align: center;
-          font-size: clamp(1.6rem, 3vw, 2.1rem);
-          font-weight: 800;
-          margin: 0;
         }
-        .roadmapUnderline {
-          width: 120px;
+        .promptsTitle {
+          font-size: clamp(1.5rem, 2.8vw, 1.9rem);
+          font-weight: 700;
+          margin: 0 0 0.5rem;
+        }
+        .promptsUnderline {
           height: 3px;
-          background: #111;
-          margin: 0.5rem auto 2rem auto;
+          width: 100%;
+          background: #ffffff;
+          opacity: 0.2;
           border-radius: 2px;
         }
 
-        .roadmapSteps {
-          position: relative;
+        .promptsContent {
           display: grid;
-          grid-template-columns: 1fr;
-          gap: 1.25rem;
+          grid-template-columns: auto 1fr auto;
+          align-items: center;
+          gap: 0.5rem;
         }
-        .roadmapRail {
+
+        .carouselWrap {
+          position: relative;
+        }
+
+        .carousel {
+          display: grid;
+          grid-auto-flow: column;
+          grid-auto-columns: calc(25% - 0.75rem);
+          column-gap: 1rem;
+          overflow-x: auto;
+          scroll-behavior: smooth;
+
+          /* Mobile smoothness */
+          -webkit-overflow-scrolling: touch; /* iOS momentum */
+          scroll-snap-type: x mandatory;
+          touch-action: pan-x;
+          padding: 0.25rem 0;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+        .carousel::-webkit-scrollbar {
           display: none;
         }
-        .step {
-          background: #fff;
-          border: 1px solid #e5e5e5;
-          border-radius: 14px;
-          padding: 1.25rem;
-          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-          text-align: left;
+
+        .promptCard {
+          scroll-snap-align: start;
+          min-width: 240px;
+          border-radius: 16px;
+          padding: 1.2rem 1.25rem;
+          color: #ffffff;
+          font-size: 1rem;
+          line-height: 1.45;
+          user-select: none;
+
+          /* brighter, glassy gradient */
+          background: linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.3),
+            rgba(255, 255, 255, 0.16)
+          );
+          backdrop-filter: blur(12px);
+          box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35),
+            inset 0 1px 0 rgba(255, 255, 255, 0.08);
+          transition: transform 0.15s ease, box-shadow 0.15s ease;
         }
-        .step h3 {
-          margin: 0.25rem 0 0.5rem;
-          font-size: 1.05rem;
+        .promptCard:hover,
+        .promptCard:focus {
+          transform: translateY(-2px);
+          box-shadow: 0 10px 22px rgba(0, 0, 0, 0.38),
+            inset 0 1px 0 rgba(255, 255, 255, 0.12);
+          outline: none;
         }
-        .step p {
-          margin: 0;
-          color: #444;
-          line-height: 1.55;
-        }
-        .dot {
-          width: 14px;
-          height: 14px;
-          border-radius: 999px;
-          background: #111;
-          box-shadow: 0 0 0 4px #f1f1f1;
+        .promptCard:active {
+          transform: scale(0.99);
         }
 
-        @media (min-width: 900px) {
-          .roadmapSteps {
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.5rem;
-          }
-          .roadmapRail {
-            display: block;
-            position: absolute;
-            left: 8%;
-            right: 8%;
-            top: 35px; /* auf Höhe der Dots */
-            height: 2px;
-            background: #e9e9e9;
-            z-index: 0;
-          }
-          .step {
-            text-align: center;
-          }
-          .dot {
-            margin: 0 auto 0.5rem auto;
-          }
-        }
-
-        /* ===== CTA ===== */
-        .cta {
-          background: #000;
+        .arrow {
+          background: rgba(255, 255, 255, 0.12);
+          border: none;
           color: #fff;
-          padding: 5rem 1.25rem;
-          text-align: center;
+          font-size: 1.6rem;
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          transition: background 0.2s, transform 0.1s;
         }
-        .ctaBig {
-          font-size: clamp(1.75rem, 3.2vw, 2.25rem);
-          margin: 0 0 0.25rem;
+        .arrow:hover {
+          background: rgba(255, 255, 255, 0.22);
         }
-        .ctaSmall {
-          color: var(--text-mid);
-          margin: 0;
-          font-size: 1.125rem;
+        .arrow:active {
+          transform: scale(0.96);
         }
 
-            /* ===== Prompt Ideas (mobile-smooth) ===== */
-.prompts {
-  background: #0b0b0b;
-  color: #ffffff;
-  padding: 3rem 1.25rem 4rem;
-}
-.promptsInner {
-  max-width: 1120px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-.promptsHeader { text-align: center; }
-.promptsTitle {
-  font-size: clamp(1.5rem, 2.8vw, 1.9rem);
-  font-weight: 700; margin: 0 0 0.5rem;
-}
-.promptsUnderline {
-  height: 3px; width: 100%;
-  background: #ffffff; opacity: 0.2; border-radius: 2px;
-}
-
-.promptsContent {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-/* Wrap adds edge fades for better mobile affordance */
-.carouselWrap {
-  position: relative;
-}
-
-.carousel {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: calc(25% - 0.75rem);
-  column-gap: 1rem;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-
-  /* Mobile smoothness */
-  -webkit-overflow-scrolling: touch; /* iOS momentum */
-  scroll-snap-type: x mandatory;
-  touch-action: pan-x;
-  padding: 0.25rem 0;
-  scrollbar-width: none; -ms-overflow-style: none;
-}
-.carousel::-webkit-scrollbar { display: none; }
-
-.promptCard {
-  scroll-snap-align: start;
-  min-width: 240px;
-  border-radius: 16px;
-  padding: 1.2rem 1.25rem;
-  color: #fff;
-  font-size: 1rem;
-  line-height: 1.45;
-  user-select: none;
-
-  /* brighter glass gradient for mobile */
-  background: linear-gradient(
-    145deg,
-    rgba(255,255,255,0.30),
-    rgba(255,255,255,0.16)
-  );
-  backdrop-filter: blur(12px);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-.promptCard:active { transform: scale(0.99); }
-
-.arrow {
-  background: rgba(255,255,255,0.12);
-  border: none; color: #fff; font-size: 1.6rem;
-  width: 44px; height: 44px; border-radius: 50%;
-  cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
-  transition: background 0.2s, transform 0.1s;
-}
-.arrow:hover { background: rgba(255,255,255,0.22); }
-.arrow:active { transform: scale(0.96); }
-
-/* Edge fades (subtle) */
-.edgeFade {
-  position: absolute; top: 0; bottom: 0; width: 36px; pointer-events: none;
-}
-.edgeFade.left { left: 0; background: linear-gradient(90deg, #0b0b0b 0%, transparent 100%); }
-.edgeFade.right { right: 0; background: linear-gradient(270deg, #0b0b0b 0%, transparent 100%); }
-
-/* Responsiveness */
-@media (max-width: 1024px) {
-  .carousel { grid-auto-columns: calc(33.333% - 0.75rem); column-gap: 0.875rem; }
-}
-@media (max-width: 720px) {
-  .arrow { width: 40px; height: 40px; font-size: 1.4rem; }
-  .carousel { grid-auto-columns: calc(75% - 0.5rem); column-gap: 0.75rem; }
-  .promptCard { min-width: 260px; }
-}
-@media (max-width: 480px) {
-  .carousel { grid-auto-columns: 86%; column-gap: 0.625rem; }
-  .promptCard { min-width: 0; padding: 1.1rem 1.15rem; }
-}
-
-
+        /* Edge fades */
+        .edgeFade {
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          width: 36px;
+          pointer-events: none;
+        }
+        .edgeFade.left {
+          left: 0;
+          background: linear-gradient(90deg, #0b0b0b 0%, transparent 100%);
+        }
+        .edgeFade.right {
+          right: 0;
+          background: linear-gradient(270deg, #0b0b0b 0%, transparent 100%);
+        }
 
         /* ===== Footer ===== */
         .footer {
@@ -988,6 +825,38 @@ useEffect(() => {
           margin: 0;
           font-size: 0.9rem;
           color: #bdbdbd;
+        }
+
+        /* Responsive tweaks for carousel */
+        @media (max-width: 1024px) {
+          .carousel {
+            grid-auto-columns: calc(33.333% - 0.75rem);
+            column-gap: 0.875rem;
+          }
+        }
+        @media (max-width: 720px) {
+          .arrow {
+            width: 40px;
+            height: 40px;
+            font-size: 1.4rem;
+          }
+          .carousel {
+            grid-auto-columns: calc(75% - 0.5rem);
+            column-gap: 0.75rem;
+          }
+          .promptCard {
+            min-width: 260px;
+          }
+        }
+        @media (max-width: 480px) {
+          .carousel {
+            grid-auto-columns: 86%;
+            column-gap: 0.625rem;
+          }
+          .promptCard {
+            min-width: 0;
+            padding: 1.1rem 1.15rem;
+          }
         }
       `}</style>
     </main>
