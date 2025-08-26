@@ -192,7 +192,7 @@ export default function Home() {
           {/* Text unter Chat */}
           <div className="belowChat">
             <p>
-          Worth to talk? Feel free to contact me for a first chat via <u>lennart.niehausmeier@web.de</u>
+          Worth to talk in person? Feel free to contact me for a first chat via <u>lennart.niehausmeier@web.de</u>
             </p>
           </div>
         </div>
