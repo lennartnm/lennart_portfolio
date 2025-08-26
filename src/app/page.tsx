@@ -11,6 +11,25 @@ const playfair = Playfair_Display({
   variable: "--font-playfair",
 });
 
+  const carouselRef = useRef<HTMLDivElement | null>(null);
+
+  function scrollPrompts(dir: number) {
+    const el = carouselRef.current;
+    if (!el) return;
+    const cardWidth = el.firstElementChild
+      ? (el.firstElementChild as HTMLElement).offsetWidth + 16
+      : 300;
+    el.scrollBy({ left: dir * cardWidth, behavior: "smooth" });
+
+    // loop effect
+    if (dir === 1 && el.scrollLeft + el.clientWidth >= el.scrollWidth - 5) {
+      el.scrollTo({ left: 0, behavior: "smooth" });
+    } else if (dir === -1 && el.scrollLeft <= 0) {
+      el.scrollTo({ left: el.scrollWidth, behavior: "smooth" });
+    }
+  }
+
+
 type Msg = { role: "user" | "assistant"; content: string };
 
 const KEYWORDS = [
@@ -202,6 +221,36 @@ export default function Home() {
       </section>
 
    
+  {/* ===== Section 3.5: Prompt Ideas Carousel ===== */}
+      <section className="prompts">
+        <div className="promptsInner">
+          <button className="arrow left" onClick={() => scrollPrompts(-1)}>
+            ‹
+          </button>
+          <div className="carousel" ref={carouselRef}>
+            {[
+              "Can you walk me through your professional journey so far?",
+              "What made you start your own e-commerce business at such a young age?",
+              "Why did you decide to stop running your e-commerce brands?",
+              "What exactly did you do at PUMA in your role as a Global Digital Marketing team member?",
+              "What kind of clients and projects are you currently handling as a Digital Marketing Consultant?",
+              "What platforms and tools are you most experienced with?",
+              "Can you give an example of a campaign you’ve scaled successfully?",
+              "What are your strengths as a digital marketing generalist?",
+              "What makes your profile unique compared to other candidates?",
+              "Why do you want to relocate to Amsterdam?",
+              "Are you open to transitioning from freelance consulting to a permanent role again?",
+            ].map((q, i) => (
+              <div className="promptCard" key={i}>
+                {q}
+              </div>
+            ))}
+          </div>
+          <button className="arrow right" onClick={() => scrollPrompts(1)}>
+            ›
+          </button>
+        </div>
+      </section>
 
     
 
@@ -405,6 +454,60 @@ export default function Home() {
           height: 100%;
           pointer-events: none;
         }
+                /* ===== Prompt Ideas Carousel ===== */
+        .prompts {
+          background: #111;
+          color: #fff;
+          padding: 3rem 1.25rem;
+        }
+        .promptsInner {
+          position: relative;
+          max-width: 1120px;
+          margin: 0 auto;
+          display: flex;
+          align-items: center;
+        }
+        .carousel {
+          display: flex;
+          overflow-x: auto;
+          scroll-behavior: smooth;
+          gap: 1rem;
+          scrollbar-width: none;
+          flex: 1;
+        }
+        .carousel::-webkit-scrollbar {
+          display: none;
+        }
+        .promptCard {
+          flex: 0 0 calc(25% - 1rem); /* 4 visible on desktop */
+          min-width: 240px;
+          background: #2a2a2a;
+          padding: 1.25rem;
+          border-radius: 12px;
+          color: #fff;
+          font-size: 0.95rem;
+          line-height: 1.45;
+        }
+        .arrow {
+          background: rgba(255,255,255,0.1);
+          border: none;
+          color: #fff;
+          font-size: 2rem;
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 0.5rem;
+          flex-shrink: 0;
+          transition: background 0.2s;
+        }
+        .arrow:hover {
+          background: rgba(255,255,255,0.25);
+        }
+
         .fadeLeft {
           left: 0;
           background: linear-gradient(90deg, #000 0%, transparent 100%);
