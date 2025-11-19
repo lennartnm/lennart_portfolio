@@ -166,7 +166,7 @@ export default function Home() {
             Hi, I&apos;m <span className="italicName">Lennart.</span>
           </h1>
           <p className="tagline">
-            Entrepreneurial driven Digital Growth Specialist looking for the next opportunity.
+            Entrepreneurial driven Digital Growth Specialist.
           </p>
 
           {/* Chatbox (funktional) */}
